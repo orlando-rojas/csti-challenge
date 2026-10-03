@@ -3,10 +3,12 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { useRef, useState } from "react";
 
 import { itemCount, subtotal } from "@/modules/cart/domain/cart";
 import { useCartStore } from "@/modules/cart/store/cart-store";
 import { formatMoney } from "@/shared/lib/format";
+import { cn } from "@/shared/lib/utils";
 import { ClampedText } from "@/shared/ui/clamped-text";
 import { ProductImage } from "@/shared/ui/product-image";
 
@@ -25,9 +27,42 @@ export function CartDrawer({
   const lines = useCartStore((state) => state.lines);
   const setQty = useCartStore((state) => state.setQty);
   const remove = useCartStore((state) => state.remove);
+  const [leavingIds, setLeavingIds] = useState<ReadonlySet<number>>(
+    () => new Set(),
+  );
+  const leaveTimers = useRef(new Map<number, number>());
   const count = itemCount(lines);
   const total = subtotal(lines);
   const noun = count === 1 ? "artículo" : "artículos";
+
+  function beginRemove(productId: number) {
+    if (leaveTimers.current.has(productId)) return;
+    leaveTimers.current.set(
+      productId,
+      window.setTimeout(() => finishRemove(productId), 240),
+    );
+    setLeavingIds((current) => {
+      if (current.has(productId)) return current;
+      const next = new Set(current);
+      next.add(productId);
+      return next;
+    });
+  }
+
+  function finishRemove(productId: number) {
+    const timer = leaveTimers.current.get(productId);
+    if (timer !== undefined) {
+      window.clearTimeout(timer);
+      leaveTimers.current.delete(productId);
+    }
+    remove(productId);
+    setLeavingIds((current) => {
+      if (!current.has(productId)) return current;
+      const next = new Set(current);
+      next.delete(productId);
+      return next;
+    });
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -79,7 +114,18 @@ export function CartDrawer({
           ) : (
             <ul className="flex-1 space-y-5 overflow-auto px-6 pb-6">
               {lines.map((line) => (
-                <li key={line.productId} className="flex gap-4">
+                <li
+                  key={line.productId}
+                  className={cn(
+                    "flex gap-4",
+                    leavingIds.has(line.productId) && "cart-line-out",
+                  )}
+                  onAnimationEnd={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    if (!leavingIds.has(line.productId)) return;
+                    finishRemove(line.productId);
+                  }}
+                >
                   <div className="image-stage relative size-24 shrink-0 overflow-hidden rounded-3xl">
                     <ProductImage
                       src={lineImage(line.image, line.productId)}
@@ -108,7 +154,10 @@ export function CartDrawer({
                           type="button"
                           className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full transition-[color,background-color,transform] duration-200 ease-out hover:bg-ink/5 active:scale-[0.98]"
                           aria-label={`Disminuir cantidad de ${line.title}`}
-                          onClick={() => setQty(line.productId, line.qty - 1)}
+                          onClick={() => {
+                            if (line.qty <= 1) beginRemove(line.productId);
+                            else setQty(line.productId, line.qty - 1);
+                          }}
                         >
                           −
                         </button>
@@ -127,7 +176,7 @@ export function CartDrawer({
                       <button
                         type="button"
                         className="text-sm text-muted underline-offset-2 transition-colors duration-200 ease-out hover:text-ink hover:underline"
-                        onClick={() => remove(line.productId)}
+                        onClick={() => beginRemove(line.productId)}
                       >
                         Quitar
                       </button>

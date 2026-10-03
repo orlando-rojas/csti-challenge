@@ -187,6 +187,18 @@ button:not(:disabled),
   animation: cart-panel-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
 }
 
+@keyframes cart-line-out {
+  to {
+    opacity: 0;
+    transform: translateX(-0.75rem);
+  }
+}
+
+.cart-line-out {
+  animation: cart-line-out 200ms ease-out forwards;
+  pointer-events: none;
+}
+
 .skip-link {
   position: absolute;
   left: 1rem;
