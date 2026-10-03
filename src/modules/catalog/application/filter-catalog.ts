@@ -4,10 +4,14 @@ import {
   type SortKey,
 } from "@/modules/catalog/application/sort";
 
-export type CatalogQuery = {
+export type CatalogFilter = {
   q: string;
   category: string;
   sort: SortKey;
+};
+
+export type CatalogQuery = CatalogFilter & {
+  page: number;
 };
 
 export function foldText(value: string): string {
@@ -19,7 +23,7 @@ export function foldText(value: string): string {
 
 export function filterCatalog(
   products: Product[],
-  query: CatalogQuery,
+  query: CatalogFilter,
 ): Product[] {
   const needle = foldText(query.q.trim());
   const filtered = products.filter((product) => {

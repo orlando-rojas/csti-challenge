@@ -8,3 +8,5 @@ const labels: Record<string, string> = {
 export function categoryLabel(category: string): string {
   return labels[category] ?? category;
 }
+
+export const categoryIds = Object.keys(labels);

@@ -1,33 +1,30 @@
 "use client";
 
-import { useQueryState } from "nuqs";
-import { useEffect, useId, useTransition } from "react";
+import { ChevronDown } from "lucide-react";
+import { useQueryStates } from "nuqs";
 
 import {
   catalogSearchParsers,
   sortQueryValue,
 } from "@/modules/catalog/application/catalog-params";
 import { sortKeys, sortLabels } from "@/modules/catalog/application/sort";
-import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useCatalogSortTransition } from "@/modules/catalog/ui/catalog-pending";
 
 export function SortSelect() {
-  const [isPending, startTransition] = useTransition();
-  const pendingId = useId();
-  const setCatalogPending = useSetCatalogPending();
-  useEffect(() => {
-    setCatalogPending(pendingId, isPending);
-    return () => setCatalogPending(pendingId, false);
-  }, [isPending, pendingId, setCatalogPending]);
-  const [sort, setSort] = useQueryState(
-    "sort",
-    catalogSearchParsers.sort.withOptions({
+  const startTransition = useCatalogSortTransition();
+  const [{ sort }, setQuery] = useQueryStates(
+    {
+      sort: catalogSearchParsers.sort,
+      page: catalogSearchParsers.page,
+    },
+    {
       shallow: false,
       startTransition,
-    }),
+    },
   );
 
   return (
-    <div>
+    <div className="relative">
       <label htmlFor="catalog-sort" className="sr-only">
         Ordenar
       </label>
@@ -37,9 +34,12 @@ export function SortSelect() {
         onChange={(event) => {
           const next = sortKeys.find((key) => key === event.target.value);
           if (!next) return;
-          void setSort(sortQueryValue(next));
+          void setQuery({
+            sort: sortQueryValue(next),
+            page: null,
+          });
         }}
-        className="h-11 rounded-full border border-line bg-paper px-3 text-sm"
+        className="h-11 appearance-none rounded-full border border-line bg-surface pr-11 pl-4 text-sm"
       >
         {sortKeys.map((key) => (
           <option key={key} value={key}>
@@ -47,6 +47,10 @@ export function SortSelect() {
           </option>
         ))}
       </select>
+      <ChevronDown
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted"
+      />
     </div>
   );
 }

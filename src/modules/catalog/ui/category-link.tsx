@@ -1,24 +1,31 @@
 "use client";
 
 import Link, { useLinkStatus } from "next/link";
-import { useEffect, useId, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useReportCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { rememberCategoryTransition } from "@/modules/catalog/ui/category-view";
 
 export function CategoryLink({
   href,
   current,
   className,
+  category,
   children,
 }: {
   href: string;
   current: boolean;
   className: string;
+  category?: string;
   children: ReactNode;
 }) {
   return (
     <Link
       href={href}
+      prefetch={true}
+      onClick={() => {
+        if (category !== undefined) rememberCategoryTransition(category);
+      }}
       {...(current ? { "aria-current": "page" as const } : {})}
       className={className}
     >
@@ -30,13 +37,6 @@ export function CategoryLink({
 
 function CategoryLinkStatus() {
   const { pending } = useLinkStatus();
-  const id = useId();
-  const setCatalogPending = useSetCatalogPending();
-
-  useEffect(() => {
-    setCatalogPending(id, pending);
-    return () => setCatalogPending(id, false);
-  }, [id, pending, setCatalogPending]);
-
+  useReportCatalogPending(pending);
   return null;
 }
