@@ -115,7 +115,7 @@ export function ProductCard({
   return (
     <article
       ref={bindArticle}
-      className="relative flex h-full w-full flex-col"
+      className="@container relative flex h-full w-full flex-col"
       data-testid="product-card"
     >
       <Link

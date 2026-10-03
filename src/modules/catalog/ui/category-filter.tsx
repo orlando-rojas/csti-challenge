@@ -22,7 +22,7 @@ export function CategoryNav({
       <p className="mb-3 text-xs font-medium tracking-[0.16em] text-muted uppercase">
         Categorías
       </p>
-      <ul className="flex gap-2 overflow-auto lg:flex-col">
+      <ul className="flex min-w-0 gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
         {items.map((category) => {
           const current = query.category === category;
           const href = catalogListingPath({
