@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { getCatalog, listCategories } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
+import { catalogCanonical } from "@/shared/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, categories] = await Promise.all([
@@ -13,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: site.url, changeFrequency: "daily", priority: 1 },
     { url: `${site.url}/products`, changeFrequency: "daily", priority: 0.8 },
     ...categories.map((category) => ({
-      url: `${site.url}/products?category=${encodeURIComponent(category)}`,
+      url: catalogCanonical(category),
       changeFrequency: "daily" as const,
       priority: 0.6,
     })),

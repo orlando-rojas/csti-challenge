@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { NuqsTestingAdapter } from "nuqs/adapters/testing";
 import { describe, expect, it, vi } from "vitest";
 
+import { CatalogPendingProvider } from "@/modules/catalog/ui/catalog-pending";
 import { SearchInput } from "@/modules/catalog/ui/search-input";
 
 describe("search input", () => {
@@ -16,7 +17,9 @@ describe("search input", () => {
         rateLimitFactor={0}
         hasMemory
       >
-        <SearchInput />
+        <CatalogPendingProvider>
+          <SearchInput />
+        </CatalogPendingProvider>
       </NuqsTestingAdapter>,
     );
 

@@ -3,17 +3,21 @@
 import { useQueryState } from "nuqs";
 import { useEffect, useId, useTransition } from "react";
 
-import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
+import {
+  catalogSearchParsers,
+  sortQueryValue,
+} from "@/modules/catalog/application/catalog-params";
 import { sortKeys, sortLabels } from "@/modules/catalog/application/sort";
-import { setCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
 
 export function SortSelect() {
   const [isPending, startTransition] = useTransition();
   const pendingId = useId();
+  const setCatalogPending = useSetCatalogPending();
   useEffect(() => {
     setCatalogPending(pendingId, isPending);
     return () => setCatalogPending(pendingId, false);
-  }, [isPending, pendingId]);
+  }, [isPending, pendingId, setCatalogPending]);
   const [sort, setSort] = useQueryState(
     "sort",
     catalogSearchParsers.sort.withOptions({
@@ -33,7 +37,7 @@ export function SortSelect() {
         onChange={(event) => {
           const next = sortKeys.find((key) => key === event.target.value);
           if (!next) return;
-          void setSort(next === "rating" ? null : next);
+          void setSort(sortQueryValue(next));
         }}
         className="h-11 rounded-full border border-line bg-paper px-3 text-sm"
       >

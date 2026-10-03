@@ -7,10 +7,9 @@ import {
   breadcrumbStructuredData,
   categoryLabel,
   getCatalog,
-  getProduct,
+  getKnownProduct,
   getRelated,
   GridSkeleton,
-  isCatalogProductId,
   JsonLd,
   ProductDetail,
   ProductGrid,
@@ -18,7 +17,7 @@ import {
   type Product,
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
-import { productCanonical } from "@/shared/lib/seo";
+import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
 
 export async function generateStaticParams() {
   const products = await getCatalog({ q: "", category: "", sort: "rating" });
@@ -31,8 +30,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  if (!isCatalogProductId(id)) notFound();
-  const product = await getProduct(Number(id));
+  const product = await getKnownProduct(id);
   if (!product) notFound();
 
   const canonical = productCanonical(product.id);
@@ -58,9 +56,7 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  if (!isCatalogProductId(id)) notFound();
-
-  const product = await getProduct(Number(id));
+  const product = await getKnownProduct(id);
   if (!product) notFound();
 
   const canonical = productCanonical(product.id);
@@ -74,7 +70,7 @@ export default async function ProductPage({
           { name: "Catálogo", url: `${site.url}/products` },
           {
             name: categoryLabel(product.category),
-            url: `${site.url}/products?category=${encodeURIComponent(product.category)}`,
+            url: catalogCanonical(product.category),
           },
           { name: product.title, url: canonical },
         ])}

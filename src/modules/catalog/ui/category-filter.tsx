@@ -1,4 +1,4 @@
-import { serializeCatalogQuery } from "@/modules/catalog/application/catalog-params.server";
+import { catalogListingPath } from "@/modules/catalog/application/catalog-params.server";
 import type { CatalogQuery } from "@/modules/catalog/application/filter-catalog";
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import { CategoryLink } from "@/modules/catalog/ui/category-link";
@@ -21,10 +21,10 @@ export function CategoryFilter({
       <ul className="flex gap-2 overflow-auto lg:flex-col">
         {items.map((category) => {
           const current = query.category === category;
-          const href = serializeCatalogQuery("/products", {
-            category: category || null,
-            q: query.q || null,
-            sort: query.sort === "rating" ? null : query.sort,
+          const href = catalogListingPath({
+            category,
+            q: query.q,
+            sort: query.sort,
           });
 
           return (

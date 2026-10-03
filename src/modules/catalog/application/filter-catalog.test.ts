@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { loadCatalogSearchParams } from "@/modules/catalog/application/catalog-params.server";
+import {
+  catalogListingPath,
+  loadCatalogSearchParams,
+} from "@/modules/catalog/application/catalog-params.server";
 import {
   filterCatalog,
   pickFeatured,
@@ -98,6 +101,33 @@ describe("catalog query", () => {
     expect(
       relatedProducts([camera, ring], ring).map((item) => item.id),
     ).toEqual([]);
+  });
+
+  it("builds one listing path and omits the default sort", () => {
+    expect(catalogListingPath()).toBe("/products");
+    expect(catalogListingPath({ q: "", category: "", sort: "rating" })).toBe(
+      "/products",
+    );
+
+    const filtered = new URL(
+      catalogListingPath({
+        q: "mesa",
+        category: "electronics",
+        sort: "price-asc",
+      }),
+      "https://example.com",
+    );
+    expect(filtered.searchParams.get("q")).toBe("mesa");
+    expect(filtered.searchParams.get("category")).toBe("electronics");
+    expect(filtered.searchParams.get("sort")).toBe("price-asc");
+
+    const clothing = new URL(
+      catalogListingPath({ category: "men's clothing" }),
+      "https://example.com",
+    );
+    expect(clothing.searchParams.get("category")).toBe("men's clothing");
+    expect(clothing.searchParams.has("sort")).toBe(false);
+    expect(clothing.searchParams.has("q")).toBe(false);
   });
 
   it("falls back when search params are garbage", () => {

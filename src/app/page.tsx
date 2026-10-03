@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
+  catalogListingPath,
   categoryLabel,
   getFeatured,
   GridSkeleton,
@@ -74,7 +75,7 @@ async function CategoryRow() {
       {categories.map((category) => (
         <li key={category}>
           <Link
-            href={`/products?category=${encodeURIComponent(category)}`}
+            href={catalogListingPath({ category })}
             className="inline-flex rounded-full border border-line px-4 py-2 text-sm whitespace-nowrap hover:border-ink"
           >
             {categoryLabel(category)}

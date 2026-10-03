@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ViewTransition } from "react";
 
+import { catalogListingPath } from "@/modules/catalog/application/catalog-params.server";
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import type { Product } from "@/modules/catalog/domain/product";
 import { formatMoney, formatRating } from "@/shared/lib/format";
@@ -45,7 +46,7 @@ export function ProductDetail({
             <li aria-hidden="true">/</li>
             <li>
               <Link
-                href={`/products?category=${encodeURIComponent(product.category)}`}
+                href={catalogListingPath({ category: product.category })}
                 className="hover:text-ink"
               >
                 {categoryLabel(product.category)}

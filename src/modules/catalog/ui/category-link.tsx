@@ -3,7 +3,7 @@
 import Link, { useLinkStatus } from "next/link";
 import { useEffect, useId, type ReactNode } from "react";
 
-import { setCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
 
 export function CategoryLink({
   href,
@@ -31,11 +31,12 @@ export function CategoryLink({
 function CategoryLinkStatus() {
   const { pending } = useLinkStatus();
   const id = useId();
+  const setCatalogPending = useSetCatalogPending();
 
   useEffect(() => {
     setCatalogPending(id, pending);
     return () => setCatalogPending(id, false);
-  }, [id, pending]);
+  }, [id, pending, setCatalogPending]);
 
   return null;
 }

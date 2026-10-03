@@ -4,8 +4,7 @@ import { Suspense } from "react";
 import { AddToCartButton } from "@/modules/cart";
 import {
   catalogSearchParamsCache,
-  CatalogResultsFrame,
-  CategoryFilter,
+  CatalogListing,
   EmptyState,
   getCatalog,
   GridSkeleton,
@@ -13,8 +12,6 @@ import {
   JsonLd,
   listCategories,
   ProductGrid,
-  SearchInput,
-  SortSelect,
   categoryLabel,
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
@@ -85,36 +82,27 @@ async function CatalogResults({
       <JsonLd
         data={itemListStructuredData(products, (id) => productCanonical(id))}
       />
-      <div className="mt-10 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <CategoryFilter categories={categories} query={query} />
-        <div>
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row">
-            <SearchInput />
-            <SortSelect />
-          </div>
-          <CatalogResultsFrame>
-            <p className="mb-6 text-sm text-muted" aria-live="polite">
-              {products.length.toLocaleString("es-PE")} productos
-            </p>
-            {products.length === 0 ? (
-              <EmptyState />
-            ) : (
-              <ProductGrid
-                products={products}
-                priorityCount={4}
-                renderAction={(product) => (
-                  <AddToCartButton
-                    productId={product.id}
-                    title={product.title}
-                    image={product.image}
-                    unitPrice={product.price.amount}
-                  />
-                )}
+      <CatalogListing categories={categories} query={query}>
+        <p className="mb-6 text-sm text-muted" aria-live="polite">
+          {products.length.toLocaleString("es-PE")} productos
+        </p>
+        {products.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <ProductGrid
+            products={products}
+            priorityCount={4}
+            renderAction={(product) => (
+              <AddToCartButton
+                productId={product.id}
+                title={product.title}
+                image={product.image}
+                unitPrice={product.price.amount}
               />
             )}
-          </CatalogResultsFrame>
-        </div>
-      </div>
+          />
+        )}
+      </CatalogListing>
     </>
   );
 }

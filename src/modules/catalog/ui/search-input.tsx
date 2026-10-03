@@ -4,15 +4,16 @@ import { debounce, useQueryState } from "nuqs";
 import { useEffect, useId, useTransition } from "react";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
-import { setCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
 
 export function SearchInput() {
   const [isPending, startTransition] = useTransition();
   const pendingId = useId();
+  const setCatalogPending = useSetCatalogPending();
   useEffect(() => {
     setCatalogPending(pendingId, isPending);
     return () => setCatalogPending(pendingId, false);
-  }, [isPending, pendingId]);
+  }, [isPending, pendingId, setCatalogPending]);
   const [q, setQ] = useQueryState(
     "q",
     catalogSearchParsers.q.withOptions({

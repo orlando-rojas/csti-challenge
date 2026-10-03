@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { getProduct, QuickView } from "@/modules/catalog";
+import { getKnownProduct, QuickView } from "@/modules/catalog";
 
 export default function InterceptedProduct({
   params,
@@ -21,7 +21,7 @@ async function QuickViewContent({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = await getProduct(Number(id));
+  const product = await getKnownProduct(id);
   if (!product) notFound();
   return <QuickView product={product} />;
 }

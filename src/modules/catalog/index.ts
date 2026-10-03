@@ -1,7 +1,5 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
-
 import {
   filterCatalog,
   pickFeatured,
@@ -11,14 +9,7 @@ import {
 import { fakeStoreRepository } from "@/modules/catalog/infrastructure/product.repository";
 import type { Product } from "@/modules/catalog/domain/product";
 
-export { isCatalogProductId } from "@/modules/catalog/infrastructure/product-ids";
-
 export async function getCatalog(query: CatalogQuery): Promise<Product[]> {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("products");
-  if (query.category) cacheTag(`category:${query.category}`);
-
   const products = await fakeStoreRepository.listProducts();
   return filterCatalog(products, query);
 }
@@ -37,6 +28,15 @@ export async function getProduct(id: number) {
   return fakeStoreRepository.getProduct(id);
 }
 
+export async function getKnownProduct(id: string) {
+  const numericId = Number(id);
+  if (!Number.isInteger(numericId) || numericId <= 0) return null;
+
+  const products = await fakeStoreRepository.listProducts();
+  if (!products.some((product) => product.id === numericId)) return null;
+  return getProduct(numericId);
+}
+
 export async function listCategories() {
   return fakeStoreRepository.listCategories();
 }
@@ -46,9 +46,10 @@ export type { Product } from "@/modules/catalog/domain/product";
 export type { CatalogQuery } from "@/modules/catalog/application/filter-catalog";
 export { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
 export {
+  catalogListingPath,
   catalogSearchParamsCache,
-  serializeCatalogQuery,
 } from "@/modules/catalog/application/catalog-params.server";
+export { CatalogListing } from "@/modules/catalog/ui/catalog-listing";
 export { CategoryFilter } from "@/modules/catalog/ui/category-filter";
 export { CatalogResultsFrame } from "@/modules/catalog/ui/catalog-results-frame";
 export { SearchInput } from "@/modules/catalog/ui/search-input";
