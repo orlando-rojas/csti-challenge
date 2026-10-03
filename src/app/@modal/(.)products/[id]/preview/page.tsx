@@ -1,14 +1,9 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { getKnownProduct, listProducts, QuickView } from "@/modules/catalog";
+import { getKnownProduct, QuickView } from "@/modules/catalog";
 
-export async function generateStaticParams() {
-  const products = await listProducts();
-  return products.map((product) => ({ id: String(product.id) }));
-}
-
-export default function InterceptedProduct({
+export default function InterceptedProductPreview({
   params,
 }: {
   params: Promise<{ id: string }>;

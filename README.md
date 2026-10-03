@@ -32,7 +32,7 @@ La interfaz está en español; el código, los comentarios y los mensajes de com
 - **Home** con hero, accesos por categoría y productos destacados según su rating.
 - **Listado de productos (PLP)** en `/products`: filtro por categoría mediante enlaces, búsqueda con debounce y ordenamiento. El estado se refleja en la URL.
 - **Ficha de producto (PDP)** en `/products/[id]`: metadata dinámica, datos estructurados JSON-LD, imágenes Open Graph y productos relacionados cargados en streaming.
-- **Vista rápida**: al navegar desde el catálogo, la ficha se abre en un modal (rutas interceptadas); al recargar la página se muestra la ficha completa.
+- **Vista rápida**: el icono de vista previa abre la ficha en un modal (rutas interceptadas). El resto de la tarjeta abre la ficha completa; al recargar la vista previa también se muestra la ficha.
 - **Carrito** persistido en `localStorage`, sincronizado entre pestañas y presentado en un drawer lateral.
 - **Modo oscuro** y **View Transitions** entre la tarjeta del producto y su ficha.
 - **SEO técnico**: `sitemap.xml`, `robots.txt` y URL canónica configurables por entorno.

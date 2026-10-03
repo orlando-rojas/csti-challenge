@@ -1,3 +1,4 @@
+import { Eye } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ViewTransition } from "react";
@@ -16,12 +17,14 @@ export function ProductCard({
   priority?: boolean;
   action?: ReactNode;
 }) {
+  const detailHref = `/products/${product.id}`;
+
   return (
-    <article className="flex h-full w-full flex-col" data-testid="product-card">
-      <Link
-        href={`/products/${product.id}`}
-        className="group flex flex-1 flex-col"
-      >
+    <article
+      className="relative flex h-full w-full flex-col"
+      data-testid="product-card"
+    >
+      <Link href={detailHref} className="group flex flex-1 flex-col">
         <ViewTransition
           name={`product-${product.id}`}
           enter="none"
@@ -45,6 +48,15 @@ export function ProductCard({
           {product.title}
         </h3>
         <p className="mt-2 font-medium">{formatMoney(product.price.amount)}</p>
+      </Link>
+      <Link
+        href={`${detailHref}/preview`}
+        scroll={false}
+        data-testid="product-preview"
+        aria-label={`Vista previa de ${product.title}`}
+        className="absolute top-3 right-3 z-10 inline-flex size-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
+      >
+        <Eye className="size-4" aria-hidden="true" />
       </Link>
       {action ? <div className="mt-auto pt-4">{action}</div> : null}
     </article>

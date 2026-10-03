@@ -49,13 +49,27 @@ test("adding to the cart survives a reload", async ({ page }) => {
   await expect(page.getByTestId("cart-badge")).toHaveText("1");
 });
 
-test("quick view opens over the catalog and a full load shows the product page", async ({
+test("preview opens over the catalog and the card opens the product page", async ({
   page,
 }) => {
   await page.goto("/products");
-  await page.getByRole("link", { name: /Backpack/ }).click();
+  const card = page
+    .getByTestId("product-card")
+    .filter({ hasText: "Backpack" })
+    .first();
+
+  await card.getByTestId("product-preview").click();
   await expect(page.getByTestId("quick-view")).toBeVisible();
+  await expect(page).toHaveURL(/\/products\/\d+\/preview$/);
   await page.reload();
+  await expect(page.getByTestId("quick-view")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Backpack",
+  );
+  await expect(page).toHaveURL(/\/products\/\d+$/);
+
+  await page.goto("/products");
+  await card.getByRole("heading", { level: 3 }).click();
   await expect(page.getByTestId("quick-view")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "Backpack",

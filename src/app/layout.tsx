@@ -42,7 +42,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: {
+  children: ReactNode;
+  modal: ReactNode;
+}) {
   return (
     <html
       lang="es"
@@ -58,6 +64,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SiteHeader cart={<CartMenu />} />
             <main id="contenido" className="flex-1">
               {children}
+              {modal}
             </main>
             <SiteFooter />
             <Toaster position="bottom-center" />
