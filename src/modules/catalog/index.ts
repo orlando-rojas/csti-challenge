@@ -60,6 +60,11 @@ export {
   catalogSearchParamsCache,
 } from "@/modules/catalog/application/catalog-params.server";
 export { CatalogListing } from "@/modules/catalog/ui/catalog-listing";
+export {
+  CatalogEntryLink,
+  CatalogHeaderLink,
+  HomeCategoryLink,
+} from "@/modules/catalog/ui/category-view";
 export { CategoryFilter } from "@/modules/catalog/ui/category-filter";
 export { CatalogResultsFrame } from "@/modules/catalog/ui/catalog-results-frame";
 export { SearchInput } from "@/modules/catalog/ui/search-input";

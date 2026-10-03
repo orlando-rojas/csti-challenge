@@ -1,10 +1,14 @@
-import { catalogListingPath } from "@/modules/catalog/application/catalog-params.server";
+import { catalogListingPath } from "@/modules/catalog/application/catalog-params";
 import type { CatalogQuery } from "@/modules/catalog/application/filter-catalog";
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import { CategoryLink } from "@/modules/catalog/ui/category-link";
+import {
+  CategoryView,
+  ForgetPendingCategory,
+} from "@/modules/catalog/ui/category-view";
 import { cn } from "@/shared/lib/utils";
 
-export function CategoryFilter({
+export function CategoryNav({
   categories,
   query,
 }: {
@@ -29,22 +33,40 @@ export function CategoryFilter({
 
           return (
             <li key={category || "all"}>
-              <CategoryLink
-                href={href}
-                current={current}
-                className={cn(
-                  "inline-flex cursor-pointer rounded-full border px-3 py-1.5 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out active:scale-[0.98]",
-                  current
-                    ? "border-ink bg-ink text-paper"
-                    : "border-line bg-surface hover:border-ink",
-                )}
-              >
-                {category ? categoryLabel(category) : "Todas"}
-              </CategoryLink>
+              <CategoryView category={category}>
+                <CategoryLink
+                  href={href}
+                  current={current}
+                  category={category}
+                  className={cn(
+                    "inline-flex cursor-pointer rounded-full border px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out active:scale-[0.98]",
+                    current
+                      ? "border-ink bg-ink text-paper"
+                      : "border-line bg-surface hover:border-ink",
+                  )}
+                >
+                  {category ? categoryLabel(category) : "Todas"}
+                </CategoryLink>
+              </CategoryView>
             </li>
           );
         })}
       </ul>
     </nav>
+  );
+}
+
+export function CategoryFilter({
+  categories,
+  query,
+}: {
+  categories: string[];
+  query: CatalogQuery;
+}) {
+  return (
+    <>
+      <ForgetPendingCategory />
+      <CategoryNav categories={categories} query={query} />
+    </>
   );
 }
