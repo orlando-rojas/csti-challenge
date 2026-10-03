@@ -92,6 +92,7 @@ describe("catalog loading", () => {
     );
     const products = await invalid.listProducts();
     expect(products[0]?.id).toBe(productsFromFixture()[0]?.id);
+    expect(productsFromFixture()[0]?.image).toBe("/catalog/1.jpg");
     expect(await invalid.listCategories()).toEqual(categoriesFromFixture());
   });
 
