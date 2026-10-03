@@ -1,12 +1,18 @@
 "use client";
 
 import { debounce, useQueryState } from "nuqs";
-import { useTransition } from "react";
+import { useEffect, useId, useTransition } from "react";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
+import { setCatalogPending } from "@/modules/catalog/ui/catalog-pending";
 
 export function SearchInput() {
   const [isPending, startTransition] = useTransition();
+  const pendingId = useId();
+  useEffect(() => {
+    setCatalogPending(pendingId, isPending);
+    return () => setCatalogPending(pendingId, false);
+  }, [isPending, pendingId]);
   const [q, setQ] = useQueryState(
     "q",
     catalogSearchParsers.q.withOptions({

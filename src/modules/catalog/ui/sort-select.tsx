@@ -1,13 +1,19 @@
 "use client";
 
 import { useQueryState } from "nuqs";
-import { useTransition } from "react";
+import { useEffect, useId, useTransition } from "react";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
 import { sortKeys, sortLabels } from "@/modules/catalog/application/sort";
+import { setCatalogPending } from "@/modules/catalog/ui/catalog-pending";
 
 export function SortSelect() {
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+  const pendingId = useId();
+  useEffect(() => {
+    setCatalogPending(pendingId, isPending);
+    return () => setCatalogPending(pendingId, false);
+  }, [isPending, pendingId]);
   const [sort, setSort] = useQueryState(
     "sort",
     catalogSearchParsers.sort.withOptions({

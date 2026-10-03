@@ -50,6 +50,7 @@ export {
   serializeCatalogQuery,
 } from "@/modules/catalog/application/catalog-params.server";
 export { CategoryFilter } from "@/modules/catalog/ui/category-filter";
+export { CatalogResultsFrame } from "@/modules/catalog/ui/catalog-results-frame";
 export { SearchInput } from "@/modules/catalog/ui/search-input";
 export { SortSelect } from "@/modules/catalog/ui/sort-select";
 export { ProductCard } from "@/modules/catalog/ui/product-card";

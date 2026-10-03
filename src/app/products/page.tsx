@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AddToCartButton } from "@/modules/cart";
 import {
   catalogSearchParamsCache,
+  CatalogResultsFrame,
   CategoryFilter,
   EmptyState,
   getCatalog,
@@ -91,25 +92,27 @@ async function CatalogResults({
             <SearchInput />
             <SortSelect />
           </div>
-          <p className="mb-6 text-sm text-muted" aria-live="polite">
-            {products.length.toLocaleString("es-PE")} productos
-          </p>
-          {products.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <ProductGrid
-              products={products}
-              priorityCount={4}
-              renderAction={(product) => (
-                <AddToCartButton
-                  productId={product.id}
-                  title={product.title}
-                  image={product.image}
-                  unitPrice={product.price.amount}
-                />
-              )}
-            />
-          )}
+          <CatalogResultsFrame>
+            <p className="mb-6 text-sm text-muted" aria-live="polite">
+              {products.length.toLocaleString("es-PE")} productos
+            </p>
+            {products.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <ProductGrid
+                products={products}
+                priorityCount={4}
+                renderAction={(product) => (
+                  <AddToCartButton
+                    productId={product.id}
+                    title={product.title}
+                    image={product.image}
+                    unitPrice={product.price.amount}
+                  />
+                )}
+              />
+            )}
+          </CatalogResultsFrame>
         </div>
       </div>
     </>

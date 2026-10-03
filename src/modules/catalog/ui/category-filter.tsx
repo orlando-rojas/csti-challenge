@@ -1,8 +1,7 @@
-import Link from "next/link";
-
 import { serializeCatalogQuery } from "@/modules/catalog/application/catalog-params.server";
 import type { CatalogQuery } from "@/modules/catalog/application/filter-catalog";
 import { categoryLabel } from "@/modules/catalog/domain/category";
+import { CategoryLink } from "@/modules/catalog/ui/category-link";
 import { cn } from "@/shared/lib/utils";
 
 export function CategoryFilter({
@@ -30,18 +29,18 @@ export function CategoryFilter({
 
           return (
             <li key={category || "all"}>
-              <Link
+              <CategoryLink
                 href={href}
-                {...(current ? { "aria-current": "page" as const } : {})}
+                current={current}
                 className={cn(
-                  "inline-flex rounded-full border px-3 py-1.5 text-sm whitespace-nowrap",
+                  "inline-flex cursor-pointer rounded-full border px-3 py-1.5 text-sm whitespace-nowrap",
                   current
                     ? "border-ink bg-ink text-paper"
                     : "border-line hover:border-ink",
                 )}
               >
                 {category ? categoryLabel(category) : "Todas"}
-              </Link>
+              </CategoryLink>
             </li>
           );
         })}
