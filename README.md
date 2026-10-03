@@ -138,7 +138,25 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 Consulta [Variables de entorno](#variables-de-entorno) para el detalle de cada una.
 
-### 4. Iniciar el servidor de desarrollo
+### 4. Sustituto local de FakeStore (opcional)
+
+`https://fakestoreapi.com` a veces no responde. `pnpm fakestore` levanta un servicio en [http://localhost:4010](http://localhost:4010) con los mismos endpoints que usa la tienda: `GET /products`, `GET /products/categories` y `GET /products/:id`. El catálogo sale de la fixture del repositorio. En el primer arranque descarga las fotos del repositorio público de Fake Store y las guarda en `services/fakestore/img` (esa carpeta no se versiona).
+
+En `.env.local`:
+
+```dotenv
+FAKESTORE_API_URL=http://localhost:4010
+```
+
+En otra terminal:
+
+```bash
+pnpm fakestore
+```
+
+El puerto se cambia con `FAKESTORE_PORT`. En desarrollo, Next acepta las imágenes de ese origen. El valor por defecto de producción sigue siendo `https://fakestoreapi.com`. Cuando la API pública vuelva, quita `FAKESTORE_API_URL` de `.env.local` y reinicia `pnpm dev`.
+
+### 5. Iniciar el servidor de desarrollo
 
 ```bash
 pnpm dev
@@ -146,14 +164,14 @@ pnpm dev
 
 La aplicación queda disponible en [http://localhost:3000](http://localhost:3000).
 
-### 5. Ejecutar el build de producción en local (opcional)
+### 6. Ejecutar el build de producción en local (opcional)
 
 ```bash
 pnpm build
 pnpm start
 ```
 
-### 6. Ejecutar Storybook (opcional)
+### 7. Ejecutar Storybook (opcional)
 
 ```bash
 pnpm storybook
@@ -169,7 +187,7 @@ Las variables se validan al arrancar con Zod en [`src/shared/config/env.ts`](src
 | ----------------------------- | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`        | No        | `https://csti-challenge.orlando-rojas.com` | Origen canónico usado en metadata, sitemap y Open Graph. Se incrusta en el bundle durante el build. |
 | `SITE_INDEXABLE`              | No        | `true`                                     | `false` agrega `noindex` y bloquea el rastreo (se usa en el espejo de Vercel).                      |
-| `FAKESTORE_API_URL`           | No        | `https://fakestoreapi.com`                 | URL base de la API de catálogo.                                                                     |
+| `FAKESTORE_API_URL`           | No        | `https://fakestoreapi.com`                 | URL base de la API de catálogo. En local puede ser `http://localhost:4010` (`pnpm fakestore`).      |
 | `REVALIDATE_SECRET`           | No        | —                                          | Secreto (mínimo 8 caracteres) para `POST /api/revalidate`. Sin él, el endpoint responde `401`.      |
 | `LOG_LEVEL`                   | No        | `info`                                     | Nivel de Pino: `fatal`, `error`, `warn`, `info`, `debug`, `trace` o `silent`.                       |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | No        | —                                          | Endpoint OTLP (por ejemplo, Grafana Cloud). Sin él, no se exporta telemetría.                       |
@@ -182,6 +200,7 @@ Las variables se validan al arrancar con Zod en [`src/shared/config/env.ts`](src
 | Script                 | Descripción                                                  |
 | ---------------------- | ------------------------------------------------------------ |
 | `pnpm dev`             | Servidor de desarrollo con recarga en caliente.              |
+| `pnpm fakestore`       | Sustituto local de FakeStore en el puerto 4010.              |
 | `pnpm build`           | Build de producción (salida `standalone`).                   |
 | `pnpm start`           | Sirve el build de producción.                                |
 | `pnpm typecheck`       | Verificación de tipos con `tsc --noEmit`.                    |
@@ -231,7 +250,7 @@ pnpm test:e2e
 Por defecto, Playwright levanta `pnpm dev` y reutiliza un servidor ya iniciado en el puerto 3000. Para probar contra otra instancia, como el contenedor Docker, define `PLAYWRIGHT_BASE_URL`:
 
 ```bash
-PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 pnpm test:e2e
+PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e
 ```
 
 Las pruebas incluyen auditorías de accesibilidad con axe-core.
@@ -339,11 +358,11 @@ Valkey, Sentry, internacionalización y PWA.
 
 ## Solución de problemas
 
-| Síntoma                                     | Causa probable y solución                                                                                          |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Error de validación de variables al iniciar | Algún valor de `.env.local` no cumple el esquema (por ejemplo, una URL mal formada). Revisa la tabla de variables. |
-| `POST /api/revalidate` responde `401`       | `REVALIDATE_SECRET` no está definido o la cabecera `x-revalidate-secret` no coincide.                              |
-| Playwright no encuentra el navegador        | Ejecuta `pnpm exec playwright install --with-deps chromium`.                                                       |
-| El puerto 3000 está ocupado                 | Detén el proceso que lo usa o inicia con `pnpm dev -p 3001`.                                                       |
-| `pnpm` no reconoce la versión               | Ejecuta `corepack enable` para usar la versión definida en `packageManager`.                                       |
-| El catálogo muestra datos de respaldo       | FakeStore no está disponible; la aplicación usa la fixture local hasta que el servicio responda.                   |
+| Síntoma                                     | Causa probable y solución                                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Error de validación de variables al iniciar | Algún valor de `.env.local` no cumple el esquema (por ejemplo, una URL mal formada). Revisa la tabla de variables.              |
+| `POST /api/revalidate` responde `401`       | `REVALIDATE_SECRET` no está definido o la cabecera `x-revalidate-secret` no coincide.                                           |
+| Playwright no encuentra el navegador        | Ejecuta `pnpm exec playwright install --with-deps chromium`.                                                                    |
+| El puerto 3000 está ocupado                 | Detén el proceso que lo usa o inicia con `pnpm dev -p 3001`.                                                                    |
+| `pnpm` no reconoce la versión               | Ejecuta `corepack enable` para usar la versión definida en `packageManager`.                                                    |
+| El catálogo muestra datos de respaldo       | FakeStore no está disponible. Ejecuta `pnpm fakestore`, define `FAKESTORE_API_URL=http://localhost:4010` y reinicia `pnpm dev`. |
