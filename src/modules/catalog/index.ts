@@ -55,4 +55,5 @@ export {
 } from "@/modules/catalog/application/structured-data";
 export { EmptyState } from "@/modules/catalog/ui/empty-state";
 export { GridSkeleton, ProductSkeleton } from "@/modules/catalog/ui/skeletons";
+export { QuickView } from "@/modules/catalog/ui/quick-view";
 export { ProductDetail } from "@/modules/catalog/ui/product-detail";
