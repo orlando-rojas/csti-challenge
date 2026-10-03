@@ -53,9 +53,17 @@ export function ProductDetail({
             </li>
           </ol>
         </nav>
-        <h1 className="mt-4 font-display text-4xl leading-tight md:text-5xl">
-          {product.title}
-        </h1>
+        <ViewTransition
+          name={`product-title-${product.id}`}
+          share="product-title"
+          enter="none"
+          exit="none"
+          default="none"
+        >
+          <h1 className="mt-4 font-display text-4xl leading-tight md:text-5xl">
+            {product.title}
+          </h1>
+        </ViewTransition>
         <p className="mt-4 text-2xl">{formatMoney(product.price.amount)}</p>
         <p className="mt-2 text-sm text-muted">
           {formatRating(product.rating.rate, product.rating.count)}

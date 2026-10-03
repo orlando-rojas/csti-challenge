@@ -82,6 +82,40 @@ button:not(:disabled),
   animation-timing-function: ease;
 }
 
+::view-transition-group(.product-title) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(.product-title),
+::view-transition-new(.product-title) {
+  height: 100%;
+  mix-blend-mode: normal;
+  object-fit: none;
+  object-position: left top;
+  overflow: clip;
+}
+
+::view-transition-old(.product-title) {
+  animation: product-title-out 160ms ease-in both;
+}
+
+::view-transition-new(.product-title) {
+  animation: product-title-in 200ms ease-out 70ms both;
+}
+
+@keyframes product-title-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes product-title-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes cart-overlay-in {
   from {
     opacity: 0;

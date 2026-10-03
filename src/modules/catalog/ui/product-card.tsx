@@ -44,9 +44,17 @@ export function ProductCard({
         <p className="mt-4 line-clamp-1 text-xs tracking-[0.14em] text-muted uppercase">
           {categoryLabel(product.category)}
         </p>
-        <h3 className="mt-1 line-clamp-2 min-h-[2lh] text-base leading-snug">
-          {product.title}
-        </h3>
+        <ViewTransition
+          name={`product-title-${product.id}`}
+          share="product-title"
+          enter="none"
+          exit="none"
+          default="none"
+        >
+          <h3 className="mt-1 line-clamp-2 min-h-[2lh] text-base leading-snug">
+            {product.title}
+          </h3>
+        </ViewTransition>
         <p className="mt-2 font-medium">{formatMoney(product.price.amount)}</p>
       </Link>
       <Link
