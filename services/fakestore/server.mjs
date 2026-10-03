@@ -10,6 +10,8 @@ import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { pipeToResponse } from "./pipe.mjs";
+
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../..");
 const imgDir = join(here, "img");
@@ -145,7 +147,7 @@ const server = createServer((request, response) => {
       "content-type": "image/jpeg",
       "cache-control": "public, max-age=86400",
     });
-    createReadStream(path).pipe(response);
+    pipeToResponse(createReadStream(path), response);
     return;
   }
 
