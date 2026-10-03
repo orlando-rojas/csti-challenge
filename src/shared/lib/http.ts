@@ -56,15 +56,21 @@ export async function httpGet(
         try {
           const response = await fetch(url, {
             signal: AbortSignal.timeout(timeoutMs),
+            headers: {
+              accept: "application/json",
+              "user-agent": "csti-challenge",
+            },
           });
           span.setAttribute("http.response.status_code", response.status);
           span.setAttribute("http.retry_count", attempt);
 
           if (response.status === 404) {
+            await response.body?.cancel().catch(() => undefined);
             throw new NotFoundError(`Not found: ${url}`);
           }
 
           if (!response.ok) {
+            await response.body?.cancel().catch(() => undefined);
             throw new ApiError(
               `Request failed with status ${response.status}`,
               response.status,
@@ -72,7 +78,16 @@ export async function httpGet(
             );
           }
 
-          return (await response.json()) as unknown;
+          const text = await response.text();
+          try {
+            return JSON.parse(text) as unknown;
+          } catch {
+            throw new ApiError(
+              `Response was not JSON (${response.status})`,
+              response.status,
+              true,
+            );
+          }
         } catch (error) {
           lastError = error;
           if (!isRetryable(error) || attempt === retries) {

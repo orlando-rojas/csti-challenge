@@ -53,6 +53,9 @@ storybook-static
 .env.local
 .env*.local
 
+# photos downloaded by the local Fake Store stand-in
+/services/fakestore/img/
+
 # os
 *:Zone.Identifier
 .gstack/
