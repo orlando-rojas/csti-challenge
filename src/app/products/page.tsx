@@ -109,7 +109,7 @@ async function CatalogResults({
         ) : (
           <ProductGrid
             products={catalog.items}
-            priorityCount={4}
+            priorityCount={2}
             renderAction={(product) => (
               <AddToCartButton
                 productId={product.id}

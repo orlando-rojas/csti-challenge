@@ -96,9 +96,9 @@ async function FeaturedGrid() {
   const { rest } = await getFeatured();
   return (
     <ul className="grid grid-cols-2 items-stretch gap-x-4 gap-y-10 md:grid-cols-4">
-      {rest.map((product, index) => (
+      {rest.map((product) => (
         <li key={product.id} className="flex">
-          <FeaturedCard product={product} priority={index < 3} />
+          <FeaturedCard product={product} />
         </li>
       ))}
     </ul>
