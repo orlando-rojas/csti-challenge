@@ -21,6 +21,8 @@ import {
 import { site } from "@/shared/config/site";
 import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
 
+export const prefetch = "partial";
+
 export async function generateMetadata({
   searchParams,
 }: {

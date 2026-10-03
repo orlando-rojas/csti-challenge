@@ -99,6 +99,7 @@ function PageControl({
   return (
     <Link
       href={href}
+      prefetch={true}
       className={cn(className, "border-line bg-surface hover:border-ink")}
     >
       {label}

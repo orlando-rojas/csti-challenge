@@ -29,6 +29,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/products"
+            prefetch={true}
             className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
           >
             Ver el catálogo
@@ -50,7 +51,11 @@ export default function HomePage() {
       <section className="py-14">
         <div className="mb-8 flex items-end justify-between gap-4">
           <h2 className="font-display text-4xl">Destacados</h2>
-          <Link href="/products" className="text-sm text-muted hover:text-ink">
+          <Link
+            href="/products"
+            prefetch={true}
+            className="text-sm text-muted hover:text-ink"
+          >
             Ver todo
           </Link>
         </div>
@@ -76,6 +81,7 @@ async function CategoryRow() {
         <li key={category}>
           <Link
             href={catalogListingPath({ category })}
+            prefetch={true}
             className="inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
           >
             {categoryLabel(category)}

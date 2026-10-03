@@ -19,6 +19,7 @@ export function CategoryLink({
   return (
     <Link
       href={href}
+      prefetch={true}
       {...(current ? { "aria-current": "page" as const } : {})}
       className={className}
     >

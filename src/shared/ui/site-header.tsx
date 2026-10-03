@@ -16,6 +16,7 @@ export function SiteHeader({ cart }: { cart: ReactNode }) {
         <nav aria-label="Principal" className="flex items-center gap-4 text-sm">
           <Link
             href="/products"
+            prefetch={true}
             className="transition-colors duration-200 ease-out hover:text-accent"
           >
             Catálogo
