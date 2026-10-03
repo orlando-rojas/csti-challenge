@@ -36,7 +36,7 @@ export default function HomePage() {
         </div>
         <Suspense
           fallback={
-            <div className="aspect-square animate-pulse rounded-[2rem] bg-ink/10" />
+            <div className="image-stage aspect-square animate-pulse rounded-[2rem]" />
           }
         >
           <HeroProduct />
@@ -76,7 +76,7 @@ async function CategoryRow() {
         <li key={category}>
           <Link
             href={catalogListingPath({ category })}
-            className="inline-flex rounded-full border border-line px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink hover:bg-ink/5 active:scale-[0.98]"
+            className="inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
           >
             {categoryLabel(category)}
           </Link>

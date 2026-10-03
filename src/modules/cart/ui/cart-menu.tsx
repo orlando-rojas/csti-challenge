@@ -27,7 +27,7 @@ export function CartMenu() {
       <CartAnnouncer />
       <button
         type="button"
-        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-line px-3 text-sm transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink hover:bg-ink/5 active:scale-[0.98]"
+        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-3 text-sm transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
         aria-label={label}
         onClick={() => {
           setHasOpened(true);

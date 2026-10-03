@@ -25,7 +25,7 @@ export function ProductCard({
           exit="none"
           share="auto"
         >
-          <div className="relative aspect-square overflow-hidden rounded-3xl bg-paper-2">
+          <div className="image-stage relative aspect-square overflow-hidden rounded-3xl">
             <ProductImage
               src={product.image}
               alt={product.title}

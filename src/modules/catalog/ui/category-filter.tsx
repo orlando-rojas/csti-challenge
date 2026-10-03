@@ -36,7 +36,7 @@ export function CategoryFilter({
                   "inline-flex cursor-pointer rounded-full border px-3 py-1.5 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out active:scale-[0.98]",
                   current
                     ? "border-ink bg-ink text-paper"
-                    : "border-line hover:border-ink",
+                    : "border-line bg-surface hover:border-ink",
                 )}
               >
                 {category ? categoryLabel(category) : "Todas"}

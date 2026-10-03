@@ -18,7 +18,7 @@ export function ProductDetail({
   return (
     <article className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
       <ViewTransition name={`product-${product.id}`}>
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-paper-2">
+        <div className="image-stage relative aspect-square overflow-hidden rounded-[2rem]">
           <ProductImage
             src={product.image}
             alt={product.title}

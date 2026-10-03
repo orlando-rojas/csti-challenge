@@ -52,7 +52,7 @@ export function CatalogPagination({
                   linkClass,
                   item === page
                     ? "border-ink bg-ink text-paper"
-                    : "border-line hover:border-ink",
+                    : "border-line bg-surface hover:border-ink",
                 )}
               >
                 {item}
@@ -86,7 +86,10 @@ function PageControl({
     return (
       <span
         aria-disabled="true"
-        className={cn(className, "border-line text-muted opacity-50")}
+        className={cn(
+          className,
+          "border-line bg-surface text-muted opacity-50",
+        )}
       >
         {label}
       </span>
@@ -94,7 +97,10 @@ function PageControl({
   }
 
   return (
-    <Link href={href} className={cn(className, "border-line hover:border-ink")}>
+    <Link
+      href={href}
+      className={cn(className, "border-line bg-surface hover:border-ink")}
+    >
       {label}
     </Link>
   );

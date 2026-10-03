@@ -43,7 +43,7 @@ export function SearchInput() {
             page: null,
           });
         }}
-        className="h-11 w-full rounded-full border border-line bg-paper px-4 text-sm outline-none placeholder:text-muted"
+        className="h-11 w-full rounded-full border border-line bg-surface px-4 text-sm outline-none placeholder:text-muted"
       />
     </div>
   );

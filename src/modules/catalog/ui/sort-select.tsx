@@ -45,7 +45,7 @@ export function SortSelect() {
             page: null,
           });
         }}
-        className="h-11 rounded-full border border-line bg-paper px-3 text-sm"
+        className="h-11 rounded-full border border-line bg-surface px-3 text-sm"
       >
         {sortKeys.map((key) => (
           <option key={key} value={key}>

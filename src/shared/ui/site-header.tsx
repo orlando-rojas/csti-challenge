@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/shared/ui/theme-toggle";
 
 export function SiteHeader({ cart }: { cart: ReactNode }) {
   return (
-    <header className="border-b border-line">
+    <header className="border-b border-line bg-paper">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4">
         <Link
           href="/"

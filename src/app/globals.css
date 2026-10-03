@@ -3,11 +3,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --paper: #f4efe6;
-  --paper-2: #e7e0d4;
+  --paper: #efe8dc;
+  --paper-2: #ffffff;
+  --surface: #ffffff;
   --ink: #1a1814;
-  --muted: #4a453e;
-  --line: #d5ccbf;
+  --muted: #5a534a;
+  --line: #ddd4c6;
   --accent: #8a3d1e;
   --accent-ink: #fff8f3;
   color-scheme: light;
@@ -15,7 +16,8 @@
 
 .dark {
   --paper: #141311;
-  --paper-2: #221f1b;
+  --paper-2: #ffffff;
+  --surface: #221f1b;
   --ink: #f3eee6;
   --muted: #c8bfb2;
   --line: #3a342c;
@@ -29,6 +31,7 @@
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --color-paper: var(--paper);
   --color-paper-2: var(--paper-2);
+  --color-surface: var(--surface);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
@@ -55,6 +58,17 @@ body {
 button:not(:disabled),
 [role="button"]:not([aria-disabled="true"]) {
   cursor: pointer;
+}
+
+.image-stage {
+  background-color: var(--paper-2);
+  box-shadow:
+    0 1px 1px rgb(26 24 20 / 0.04),
+    0 18px 36px -28px rgb(26 24 20 / 0.55);
+}
+
+.dark .image-stage {
+  box-shadow: none;
 }
 
 :focus-visible {
