@@ -17,8 +17,11 @@ export function ProductCard({
   action?: ReactNode;
 }) {
   return (
-    <article className="flex h-full flex-col" data-testid="product-card">
-      <Link href={`/products/${product.id}`} className="group block">
+    <article className="flex h-full w-full flex-col" data-testid="product-card">
+      <Link
+        href={`/products/${product.id}`}
+        className="group flex flex-1 flex-col"
+      >
         <ViewTransition
           name={`product-${product.id}`}
           enter="none"
@@ -35,15 +38,15 @@ export function ProductCard({
             />
           </div>
         </ViewTransition>
-        <p className="mt-4 text-xs tracking-[0.14em] text-muted uppercase">
+        <p className="mt-4 line-clamp-1 text-xs tracking-[0.14em] text-muted uppercase">
           {categoryLabel(product.category)}
         </p>
-        <h3 className="mt-1 line-clamp-2 text-base leading-snug">
+        <h3 className="mt-1 line-clamp-2 min-h-[2lh] text-base leading-snug">
           {product.title}
         </h3>
         <p className="mt-2 font-medium">{formatMoney(product.price.amount)}</p>
       </Link>
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? <div className="mt-auto pt-4">{action}</div> : null}
     </article>
   );
 }
