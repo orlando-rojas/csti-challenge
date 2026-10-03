@@ -6,6 +6,7 @@ import { ViewTransition } from "react";
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import type { Product } from "@/modules/catalog/domain/product";
 import { formatMoney } from "@/shared/lib/format";
+import { ClampedText } from "@/shared/ui/clamped-text";
 import { ProductImage } from "@/shared/ui/product-image";
 
 export function ProductCard({
@@ -41,9 +42,12 @@ export function ProductCard({
             />
           </div>
         </ViewTransition>
-        <p className="mt-4 line-clamp-1 text-xs tracking-[0.14em] text-muted uppercase">
+        <ClampedText
+          lines={1}
+          className="mt-4 text-xs tracking-[0.14em] text-muted uppercase"
+        >
           {categoryLabel(product.category)}
-        </p>
+        </ClampedText>
         <ViewTransition
           name={`product-title-${product.id}`}
           share="product-title"
@@ -51,9 +55,13 @@ export function ProductCard({
           exit="none"
           default="none"
         >
-          <h3 className="mt-1 line-clamp-2 min-h-[2lh] text-base leading-snug">
+          <ClampedText
+            as="h3"
+            lines={2}
+            className="mt-1 min-h-[2lh] text-base leading-snug"
+          >
             {product.title}
-          </h3>
+          </ClampedText>
         </ViewTransition>
         <p className="mt-2 font-medium">{formatMoney(product.price.amount)}</p>
       </Link>

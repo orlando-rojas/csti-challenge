@@ -152,6 +152,25 @@ button:not(:disabled),
   }
 }
 
+@keyframes text-tooltip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.text-tooltip {
+  animation: text-tooltip-in 160ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-tooltip {
+    animation: none;
+  }
+}
+
 .cart-overlay[data-state="open"] {
   animation: cart-overlay-in 280ms ease both;
 }

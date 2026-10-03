@@ -7,6 +7,7 @@ import Link from "next/link";
 import { itemCount, subtotal } from "@/modules/cart/domain/cart";
 import { useCartStore } from "@/modules/cart/store/cart-store";
 import { formatMoney } from "@/shared/lib/format";
+import { ClampedText } from "@/shared/ui/clamped-text";
 import { ProductImage } from "@/shared/ui/product-image";
 
 function lineImage(image: string, productId: number): string {
@@ -89,9 +90,9 @@ export function CartDrawer({
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="line-clamp-2 text-sm leading-snug">
+                      <ClampedText lines={2} className="text-sm leading-snug">
                         {line.title}
-                      </p>
+                      </ClampedText>
                       <p className="shrink-0 text-sm font-medium">
                         {formatMoney(line.unitPrice * line.qty)}
                       </p>
