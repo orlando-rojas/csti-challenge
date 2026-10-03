@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import { CartMenu } from "@/modules/cart";
+import { CatalogHeaderLink } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { SiteHeader } from "@/shared/ui/site-header";
@@ -42,7 +43,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: {
+  children: ReactNode;
+  modal: ReactNode;
+}) {
   return (
     <html
       lang="es"
@@ -55,12 +62,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <a className="skip-link" href="#contenido">
               Saltar al contenido
             </a>
-            <SiteHeader cart={<CartMenu />} />
+            <SiteHeader cart={<CartMenu />} catalog={<CatalogHeaderLink />} />
             <main id="contenido" className="flex-1">
               {children}
+              {modal}
             </main>
             <SiteFooter />
-            <Toaster position="bottom-center" />
+            <Toaster
+              position="bottom-center"
+              closeButton
+              toastOptions={{ closeButtonAriaLabel: "Cerrar" }}
+            />
             <WebVitals />
           </NuqsAdapter>
         </ThemeProvider>
