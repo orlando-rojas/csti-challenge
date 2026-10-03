@@ -206,9 +206,9 @@ html.theme-transition,
 html.theme-transition *,
 html.theme-transition *::before,
 html.theme-transition *::after {
+  /* Color is left out: transitioning it on every node makes text blink. */
   transition:
     background-color 280ms ease,
-    color 280ms ease,
     border-color 280ms ease,
     outline-color 280ms ease,
     box-shadow 280ms ease;
