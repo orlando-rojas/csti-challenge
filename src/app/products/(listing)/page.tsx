@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
@@ -7,14 +6,17 @@ import {
   catalogSearchParamsCache,
   CatalogListing,
   CatalogPagination,
+  CatalogResultsFrame,
+  CategoryFilter,
   EmptyPage,
   EmptyState,
   getCatalog,
-  GridSkeleton,
   itemListStructuredData,
   JsonLd,
   listCategories,
   ProductGrid,
+  SearchInput,
+  SortSelect,
   categoryLabel,
   type CatalogPage,
 } from "@/modules/catalog";
@@ -61,17 +63,24 @@ export default function ProductsPage({
         </p>
         <h1 className="mt-2 font-display text-5xl">Todo el inventario</h1>
       </header>
-      <Suspense
-        fallback={
-          <div className="mt-10">
-            <GridSkeleton />
-          </div>
-        }
-      >
+      <CatalogListing sidebar={<CategorySidebar searchParams={searchParams} />}>
         <CatalogResults searchParams={searchParams} />
-      </Suspense>
+      </CatalogListing>
     </div>
   );
+}
+
+async function CategorySidebar({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const [query, categories] = await Promise.all([
+    catalogSearchParamsCache.parse(searchParams),
+    listCategories(),
+  ]);
+
+  return <CategoryFilter categories={categories} query={query} />;
 }
 
 async function CatalogResults({
@@ -80,10 +89,7 @@ async function CatalogResults({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const query = await catalogSearchParamsCache.parse(searchParams);
-  const [catalog, categories] = await Promise.all([
-    getCatalog(query),
-    listCategories(),
-  ]);
+  const catalog = await getCatalog(query);
 
   return (
     <>
@@ -92,7 +98,11 @@ async function CatalogResults({
           productCanonical(id),
         )}
       />
-      <CatalogListing categories={categories} query={query}>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+        <SearchInput />
+        <SortSelect />
+      </div>
+      <CatalogResultsFrame>
         <p className="mb-6 text-sm text-muted" aria-live="polite">
           {catalogRangeLabel(catalog)}
         </p>
@@ -125,7 +135,7 @@ async function CatalogResults({
           page={catalog.page}
           pageCount={catalog.pageCount}
         />
-      </CatalogListing>
+      </CatalogResultsFrame>
     </>
   );
 }

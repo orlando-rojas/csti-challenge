@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import { CartMenu } from "@/modules/cart";
+import { CatalogHeaderLink } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { SiteHeader } from "@/shared/ui/site-header";
@@ -61,7 +62,7 @@ export default function RootLayout({
             <a className="skip-link" href="#contenido">
               Saltar al contenido
             </a>
-            <SiteHeader cart={<CartMenu />} />
+            <SiteHeader cart={<CartMenu />} catalog={<CatalogHeaderLink />} />
             <main id="contenido" className="flex-1">
               {children}
               {modal}

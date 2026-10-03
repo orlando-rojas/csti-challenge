@@ -1,12 +1,13 @@
-import Link from "next/link";
 import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
+  CatalogEntryLink,
   catalogListingPath,
   categoryLabel,
   getFeatured,
   GridSkeleton,
+  HomeCategoryLink,
   listCategories,
   ProductCard,
   type Product,
@@ -27,13 +28,12 @@ export default function HomePage() {
             Electrónica, joyería y ropa con ficha clara, precio visible y un
             carrito que se queda en este navegador.
           </p>
-          <Link
+          <CatalogEntryLink
             href="/products"
-            prefetch={true}
             className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
           >
             Ver el catálogo
-          </Link>
+          </CatalogEntryLink>
         </div>
         <Suspense
           fallback={
@@ -51,13 +51,12 @@ export default function HomePage() {
       <section className="py-14">
         <div className="mb-8 flex items-end justify-between gap-4">
           <h2 className="font-display text-4xl">Destacados</h2>
-          <Link
+          <CatalogEntryLink
             href="/products"
-            prefetch={true}
             className="text-sm text-muted hover:text-ink"
           >
             Ver todo
-          </Link>
+          </CatalogEntryLink>
         </div>
         <Suspense fallback={<GridSkeleton count={4} />}>
           <FeaturedGrid />
@@ -79,13 +78,12 @@ async function CategoryRow() {
     <ul className="flex gap-2 overflow-auto pb-2">
       {categories.map((category) => (
         <li key={category}>
-          <Link
+          <HomeCategoryLink
+            category={category}
             href={catalogListingPath({ category })}
-            prefetch={true}
-            className="inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
           >
             {categoryLabel(category)}
-          </Link>
+          </HomeCategoryLink>
         </li>
       ))}
     </ul>

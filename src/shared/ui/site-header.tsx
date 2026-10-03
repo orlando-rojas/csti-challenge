@@ -3,7 +3,13 @@ import type { ReactNode } from "react";
 
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 
-export function SiteHeader({ cart }: { cart: ReactNode }) {
+export function SiteHeader({
+  cart,
+  catalog,
+}: {
+  cart: ReactNode;
+  catalog: ReactNode;
+}) {
   return (
     <header className="border-b border-line bg-paper">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4">
@@ -14,13 +20,7 @@ export function SiteHeader({ cart }: { cart: ReactNode }) {
           Norte
         </Link>
         <nav aria-label="Principal" className="flex items-center gap-4 text-sm">
-          <Link
-            href="/products"
-            prefetch={true}
-            className="transition-colors duration-200 ease-out hover:text-accent"
-          >
-            Catálogo
-          </Link>
+          {catalog}
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
