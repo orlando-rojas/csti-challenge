@@ -145,9 +145,6 @@ export function CartDrawer({
                   {formatMoney(total)}
                 </span>
               </p>
-              <p className="mt-2 text-xs text-muted">
-                El pago no forma parte de esta tienda.
-              </p>
             </div>
           ) : null}
         </Dialog.Content>
