@@ -67,7 +67,11 @@ export default function RootLayout({
               {modal}
             </main>
             <SiteFooter />
-            <Toaster position="bottom-center" />
+            <Toaster
+              position="bottom-center"
+              closeButton
+              toastOptions={{ closeButtonAriaLabel: "Cerrar" }}
+            />
             <WebVitals />
           </NuqsAdapter>
         </ThemeProvider>

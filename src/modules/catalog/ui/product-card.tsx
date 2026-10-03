@@ -2,12 +2,7 @@
 
 import { Eye } from "lucide-react";
 import Link from "next/link";
-import {
-  useLayoutEffect,
-  useRef,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { useCallback, type MouseEvent, type ReactNode } from "react";
 import { ViewTransition } from "react";
 
 import { categoryLabel } from "@/modules/catalog/domain/category";
@@ -107,10 +102,7 @@ export function ProductCard({
   transitionTitle?: boolean;
 }) {
   const detailHref = `/products/${product.id}`;
-  const articleRef = useRef<HTMLElement>(null);
-
-  useLayoutEffect(() => {
-    const article = articleRef.current;
+  const bindArticle = useCallback((article: HTMLElement | null) => {
     if (!article) return;
     const reset = () => {
       article.style.transform = "";
@@ -122,7 +114,7 @@ export function ProductCard({
 
   return (
     <article
-      ref={articleRef}
+      ref={bindArticle}
       className="relative flex h-full w-full flex-col"
       data-testid="product-card"
     >

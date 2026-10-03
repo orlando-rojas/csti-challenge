@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useQueryStates } from "nuqs";
 
 import {
@@ -23,7 +24,7 @@ export function SortSelect() {
   );
 
   return (
-    <div>
+    <div className="relative">
       <label htmlFor="catalog-sort" className="sr-only">
         Ordenar
       </label>
@@ -38,7 +39,7 @@ export function SortSelect() {
             page: null,
           });
         }}
-        className="h-11 rounded-full border border-line bg-surface px-3 text-sm"
+        className="h-11 appearance-none rounded-full border border-line bg-surface pr-11 pl-4 text-sm"
       >
         {sortKeys.map((key) => (
           <option key={key} value={key}>
@@ -46,6 +47,10 @@ export function SortSelect() {
           </option>
         ))}
       </select>
+      <ChevronDown
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted"
+      />
     </div>
   );
 }

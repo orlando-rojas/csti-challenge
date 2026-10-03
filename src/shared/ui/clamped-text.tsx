@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  useEffect,
+  useCallback,
   useState,
   type HTMLAttributes,
   type MouseEvent,
@@ -63,9 +63,8 @@ export function ClampedText({
   ...props
 }: ClampedTextProps) {
   const [box, setBox] = useState<TooltipBox | null>(null);
-
-  useEffect(() => {
-    if (!box) return;
+  const bindTooltip = useCallback((node: HTMLSpanElement | null) => {
+    if (!node) return;
     const hide = () => setBox(null);
     window.addEventListener("scroll", hide, true);
     window.addEventListener("resize", hide);
@@ -73,7 +72,7 @@ export function ClampedText({
       window.removeEventListener("scroll", hide, true);
       window.removeEventListener("resize", hide);
     };
-  }, [box]);
+  }, []);
 
   function show(event: MouseEvent<HTMLElement>) {
     onMouseEnter?.(event);
@@ -107,6 +106,7 @@ export function ClampedText({
       {box
         ? createPortal(
             <span
+              ref={bindTooltip}
               role="tooltip"
               className="text-tooltip pointer-events-none fixed z-[60] rounded-2xl border border-line bg-surface px-3 py-2 text-left text-sm leading-snug font-normal tracking-normal text-ink normal-case shadow-[0_16px_40px_-24px_rgb(26_24_20/0.7)]"
               style={{
