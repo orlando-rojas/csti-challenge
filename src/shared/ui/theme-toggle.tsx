@@ -20,7 +20,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className="inline-flex size-10 items-center justify-center rounded-full border border-line"
+      className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-line"
       aria-label={dark ? "Activar modo claro" : "Activar modo oscuro"}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >
