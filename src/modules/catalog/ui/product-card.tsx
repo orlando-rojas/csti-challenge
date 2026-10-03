@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ViewTransition } from "react";
@@ -6,6 +5,7 @@ import { ViewTransition } from "react";
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import type { Product } from "@/modules/catalog/domain/product";
 import { formatMoney } from "@/shared/lib/format";
+import { ProductImage } from "@/shared/ui/product-image";
 
 export function ProductCard({
   product,
@@ -19,15 +19,19 @@ export function ProductCard({
   return (
     <article className="flex h-full flex-col" data-testid="product-card">
       <Link href={`/products/${product.id}`} className="group block">
-        <ViewTransition name={`product-${product.id}`}>
+        <ViewTransition
+          name={`product-${product.id}`}
+          enter="none"
+          exit="none"
+          share="auto"
+        >
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-paper-2">
-            <Image
+            <ProductImage
               src={product.image}
               alt={product.title}
-              fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.03]"
-              {...(priority ? { preload: true } : { loading: "lazy" as const })}
+              preload={priority}
             />
           </div>
         </ViewTransition>
