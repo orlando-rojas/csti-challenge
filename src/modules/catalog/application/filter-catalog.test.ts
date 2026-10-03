@@ -5,6 +5,10 @@ import {
   loadCatalogSearchParams,
 } from "@/modules/catalog/application/catalog-params.server";
 import {
+  paginateCatalog,
+  pageWindow,
+} from "@/modules/catalog/application/paginate";
+import {
   filterCatalog,
   pickFeatured,
   relatedProducts,
@@ -128,6 +132,25 @@ describe("catalog query", () => {
     expect(clothing.searchParams.get("category")).toBe("men's clothing");
     expect(clothing.searchParams.has("sort")).toBe(false);
     expect(clothing.searchParams.has("q")).toBe(false);
+    expect(clothing.searchParams.has("page")).toBe(false);
+    expect(catalogListingPath({ page: 1 })).toBe("/products");
+    expect(catalogListingPath({ page: 2 })).toBe("/products?page=2");
+  });
+
+  it("returns one page and a short window for a long catalog", () => {
+    const products = Array.from({ length: 25 }, (_, index) =>
+      product({ id: index + 1, title: `Pieza ${index + 1}` }),
+    );
+    const page = paginateCatalog(products, 2, 12);
+    expect(page.total).toBe(25);
+    expect(page.pageCount).toBe(3);
+    expect(page.items.map((item) => item.id)).toEqual(
+      Array.from({ length: 12 }, (_, index) => index + 13),
+    );
+    expect(paginateCatalog(products, 9, 12).items).toEqual([]);
+    expect(paginateCatalog(products, 0, 12).page).toBe(1);
+    expect(pageWindow(50, 200)).toEqual([1, "gap", 49, 50, 51, "gap", 200]);
+    expect(pageWindow(1, 200)).toEqual([1, 2, "gap", 200]);
   });
 
   it("falls back when search params are garbage", () => {
@@ -136,16 +159,25 @@ describe("catalog query", () => {
         q: "  hola ",
         category: "electronics",
         sort: "nope",
+        page: "0",
       }),
     ).toEqual({
       q: "  hola ",
       category: "electronics",
       sort: "rating",
+      page: 0,
+    });
+    expect(loadCatalogSearchParams({ page: "nope" })).toEqual({
+      q: "",
+      category: "",
+      sort: "rating",
+      page: 1,
     });
     expect(loadCatalogSearchParams({})).toEqual({
       q: "",
       category: "",
       sort: "rating",
+      page: 1,
     });
   });
 

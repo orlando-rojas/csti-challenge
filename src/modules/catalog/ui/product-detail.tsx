@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ViewTransition } from "react";
@@ -7,6 +6,7 @@ import { catalogListingPath } from "@/modules/catalog/application/catalog-params
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import type { Product } from "@/modules/catalog/domain/product";
 import { formatMoney, formatRating } from "@/shared/lib/format";
+import { ProductImage } from "@/shared/ui/product-image";
 
 export function ProductDetail({
   product,
@@ -17,12 +17,17 @@ export function ProductDetail({
 }) {
   return (
     <article className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-      <ViewTransition name={`product-${product.id}`}>
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-paper-2">
-          <Image
+      <ViewTransition
+        name={`product-${product.id}`}
+        share={{ "nav-forward": "auto", default: "none" }}
+        enter="none"
+        exit="none"
+        default="none"
+      >
+        <div className="image-stage relative aspect-square overflow-hidden rounded-[2rem]">
+          <ProductImage
             src={product.image}
             alt={product.title}
-            fill
             preload
             sizes="(max-width: 1024px) 100vw, 560px"
             className="object-contain p-10"
@@ -54,9 +59,17 @@ export function ProductDetail({
             </li>
           </ol>
         </nav>
-        <h1 className="mt-4 font-display text-4xl leading-tight md:text-5xl">
-          {product.title}
-        </h1>
+        <ViewTransition
+          name={`product-title-${product.id}`}
+          share={{ "nav-forward": "product-title", default: "none" }}
+          enter="none"
+          exit="none"
+          default="none"
+        >
+          <h1 className="mt-4 font-display text-4xl leading-tight md:text-5xl">
+            {product.title}
+          </h1>
+        </ViewTransition>
         <p className="mt-4 text-2xl">{formatMoney(product.price.amount)}</p>
         <p className="mt-2 text-sm text-muted">
           {formatRating(product.rating.rate, product.rating.count)}

@@ -9,7 +9,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="mt-6 inline-flex h-11 items-center rounded-full bg-accent px-5 text-accent-ink"
+        className="mt-6 inline-flex h-11 items-center rounded-full bg-accent px-5 text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
       >
         Volver al inicio
       </Link>
