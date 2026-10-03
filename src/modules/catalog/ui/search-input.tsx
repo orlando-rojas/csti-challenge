@@ -1,19 +1,12 @@
 "use client";
 
 import { debounce, useQueryStates } from "nuqs";
-import { useEffect, useId, useTransition } from "react";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
-import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useCatalogSearchTransition } from "@/modules/catalog/ui/catalog-pending";
 
 export function SearchInput() {
-  const [isPending, startTransition] = useTransition();
-  const pendingId = useId();
-  const setCatalogPending = useSetCatalogPending();
-  useEffect(() => {
-    setCatalogPending(pendingId, isPending);
-    return () => setCatalogPending(pendingId, false);
-  }, [isPending, pendingId, setCatalogPending]);
+  const { pending, startTransition } = useCatalogSearchTransition();
   const [{ q }, setQuery] = useQueryStates(
     {
       q: catalogSearchParsers.q,
@@ -35,7 +28,7 @@ export function SearchInput() {
         id="catalog-search"
         value={q}
         placeholder="Buscar productos"
-        aria-busy={isPending}
+        aria-busy={pending}
         onChange={(event) => {
           const value = event.target.value;
           void setQuery({

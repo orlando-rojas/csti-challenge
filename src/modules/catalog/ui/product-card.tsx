@@ -1,6 +1,13 @@
+"use client";
+
 import { Eye } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import { ViewTransition } from "react";
 
 import { categoryLabel } from "@/modules/catalog/domain/category";
@@ -9,28 +16,128 @@ import { formatMoney } from "@/shared/lib/format";
 import { ClampedText } from "@/shared/ui/clamped-text";
 import { ProductImage } from "@/shared/ui/product-image";
 
+function titleInView(title: HTMLElement) {
+  const rect = title.getBoundingClientRect();
+  return (
+    rect.bottom > 0 &&
+    rect.right > 0 &&
+    rect.top < window.innerHeight &&
+    rect.left < window.innerWidth
+  );
+}
+
+const imageShare = { "nav-forward": "auto", default: "none" } as const;
+const titleShare = { "nav-forward": "product-title", default: "none" } as const;
+
+function resetShiftAfterSnapshot(undo: () => void) {
+  const start = document.startViewTransition?.bind(document);
+  if (!start) {
+    undo();
+    return;
+  }
+
+  document.startViewTransition = ((callback: unknown) => {
+    document.startViewTransition = start;
+    if (typeof callback === "function") {
+      return start(() => {
+        undo();
+        return (callback as () => unknown)();
+      });
+    }
+
+    const options = callback as { update?: () => unknown };
+    return start({
+      ...options,
+      update: () => {
+        undo();
+        return options.update?.();
+      },
+    });
+  }) as typeof document.startViewTransition;
+}
+
+function revealTitle(event: MouseEvent<HTMLAnchorElement>) {
+  if (
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    event.button !== 0 ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    return;
+  }
+
+  const title = event.currentTarget.querySelector("h3");
+  if (!title || titleInView(title)) return;
+  const rect = title.getBoundingClientRect();
+  const card = title.closest("article");
+  if (!card) return;
+  const delta =
+    rect.bottom > window.innerHeight
+      ? rect.bottom - window.innerHeight + 16
+      : rect.top;
+  card.style.transform = `translateY(${-delta}px)`;
+  resetShiftAfterSnapshot(() => {
+    card.style.transform = "";
+  });
+}
+
+function ProductTitle({ product }: { product: Product }) {
+  return (
+    <ClampedText
+      as="h3"
+      lines={2}
+      className="mt-1 min-h-[2lh] text-base leading-snug"
+    >
+      {product.title}
+    </ClampedText>
+  );
+}
+
 export function ProductCard({
   product,
   priority = false,
   action,
+  transitionTitle = true,
 }: {
   product: Product;
   priority?: boolean;
   action?: ReactNode;
+  transitionTitle?: boolean;
 }) {
   const detailHref = `/products/${product.id}`;
+  const articleRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const article = articleRef.current;
+    if (!article) return;
+    const reset = () => {
+      article.style.transform = "";
+    };
+    reset();
+    window.addEventListener("pageshow", reset);
+    return () => window.removeEventListener("pageshow", reset);
+  }, []);
 
   return (
     <article
+      ref={articleRef}
       className="relative flex h-full w-full flex-col"
       data-testid="product-card"
     >
-      <Link href={detailHref} className="group flex flex-1 flex-col">
+      <Link
+        href={detailHref}
+        transitionTypes={["nav-forward"]}
+        onClick={revealTitle}
+        className="group flex flex-1 flex-col"
+      >
         <ViewTransition
           name={`product-${product.id}`}
           enter="none"
           exit="none"
-          share="auto"
+          default="none"
+          share={imageShare}
         >
           <div className="image-stage relative aspect-square overflow-hidden rounded-3xl">
             <ProductImage
@@ -48,21 +155,19 @@ export function ProductCard({
         >
           {categoryLabel(product.category)}
         </ClampedText>
-        <ViewTransition
-          name={`product-title-${product.id}`}
-          share="product-title"
-          enter="none"
-          exit="none"
-          default="none"
-        >
-          <ClampedText
-            as="h3"
-            lines={2}
-            className="mt-1 min-h-[2lh] text-base leading-snug"
+        {transitionTitle ? (
+          <ViewTransition
+            name={`product-title-${product.id}`}
+            share={titleShare}
+            enter="none"
+            exit="none"
+            default="none"
           >
-            {product.title}
-          </ClampedText>
-        </ViewTransition>
+            <ProductTitle product={product} />
+          </ViewTransition>
+        ) : (
+          <ProductTitle product={product} />
+        )}
         <p className="mt-2 font-medium">{formatMoney(product.price.amount)}</p>
       </Link>
       <Link

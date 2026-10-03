@@ -104,6 +104,7 @@ async function RelatedProducts({ product }: { product: Product }) {
   return (
     <ProductGrid
       products={related}
+      transitionTitle={false}
       renderAction={(item) => (
         <AddToCartButton
           productId={item.id}

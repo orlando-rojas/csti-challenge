@@ -17,7 +17,13 @@ export function ProductDetail({
 }) {
   return (
     <article className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-      <ViewTransition name={`product-${product.id}`}>
+      <ViewTransition
+        name={`product-${product.id}`}
+        share={{ "nav-forward": "auto", default: "none" }}
+        enter="none"
+        exit="none"
+        default="none"
+      >
         <div className="image-stage relative aspect-square overflow-hidden rounded-[2rem]">
           <ProductImage
             src={product.image}
@@ -55,7 +61,7 @@ export function ProductDetail({
         </nav>
         <ViewTransition
           name={`product-title-${product.id}`}
-          share="product-title"
+          share={{ "nav-forward": "product-title", default: "none" }}
           enter="none"
           exit="none"
           default="none"

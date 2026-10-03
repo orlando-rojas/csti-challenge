@@ -7,10 +7,12 @@ export function ProductGrid({
   products,
   priorityCount = 0,
   renderAction,
+  transitionTitle = true,
 }: {
   products: Product[];
   priorityCount?: number;
   renderAction?: (product: Product) => ReactNode;
+  transitionTitle?: boolean;
 }) {
   return (
     <ul className="grid grid-cols-2 items-stretch gap-x-4 gap-y-10 md:grid-cols-3">
@@ -21,6 +23,7 @@ export function ProductGrid({
             <ProductCard
               product={product}
               priority={index < priorityCount}
+              transitionTitle={transitionTitle}
               {...(action ? { action } : {})}
             />
           </li>
