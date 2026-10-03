@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 import { getKnownProduct, QuickView } from "@/modules/catalog";
 
-export default function InterceptedProduct({
+export default function InterceptedProductPreview({
   params,
 }: {
   params: Promise<{ id: string }>;
