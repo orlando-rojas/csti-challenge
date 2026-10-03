@@ -9,6 +9,7 @@ import { site } from "@/shared/config/site";
 import { SiteFooter } from "@/shared/ui/site-footer";
 import { SiteHeader } from "@/shared/ui/site-header";
 import { ThemeProvider } from "@/shared/ui/theme-provider";
+import { WebVitals } from "@/shared/ui/web-vitals";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </main>
             <SiteFooter />
             <Toaster position="bottom-center" />
+            <WebVitals />
           </NuqsAdapter>
         </ThemeProvider>
       </body>
