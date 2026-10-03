@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 
-import { getCatalog, listCategories } from "@/modules/catalog";
+import { listCategories, listProducts } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { catalogCanonical } from "@/shared/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, categories] = await Promise.all([
-    getCatalog({ q: "", category: "", sort: "rating" }),
+    listProducts(),
     listCategories(),
   ]);
 

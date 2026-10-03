@@ -27,12 +27,23 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    ...(isDev ? { dangerouslyAllowLocalIP: true } : {}),
     remotePatterns: [
       {
         protocol: "https",
         hostname: "fakestoreapi.com",
         pathname: "/img/**",
       },
+      ...(isDev
+        ? [
+            {
+              protocol: "http" as const,
+              hostname: "localhost",
+              port: "4010",
+              pathname: "/img/**",
+            },
+          ]
+        : []),
     ],
   },
   async headers() {
