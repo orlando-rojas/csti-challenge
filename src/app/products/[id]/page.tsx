@@ -1,0 +1,121 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+
+import { AddToCartButton } from "@/modules/cart";
+import {
+  breadcrumbStructuredData,
+  categoryLabel,
+  getCatalog,
+  getProduct,
+  getRelated,
+  GridSkeleton,
+  isCatalogProductId,
+  JsonLd,
+  ProductDetail,
+  ProductGrid,
+  productStructuredData,
+  type Product,
+} from "@/modules/catalog";
+import { site } from "@/shared/config/site";
+import { productCanonical } from "@/shared/lib/seo";
+
+export async function generateStaticParams() {
+  const products = await getCatalog({ q: "", category: "", sort: "rating" });
+  return products.map((product) => ({ id: String(product.id) }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  if (!isCatalogProductId(id)) notFound();
+  const product = await getProduct(Number(id));
+  if (!product) notFound();
+
+  const canonical = productCanonical(product.id);
+  return {
+    title: product.title,
+    description: product.description,
+    alternates: { canonical },
+    robots: site.indexable
+      ? { index: true, follow: true }
+      : { index: false, follow: false },
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      url: canonical,
+      images: [product.image],
+    },
+  };
+}
+
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  if (!isCatalogProductId(id)) notFound();
+
+  const product = await getProduct(Number(id));
+  if (!product) notFound();
+
+  const canonical = productCanonical(product.id);
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-10">
+      <JsonLd data={productStructuredData(product, canonical)} />
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "Inicio", url: site.url },
+          { name: "Catálogo", url: `${site.url}/products` },
+          {
+            name: categoryLabel(product.category),
+            url: `${site.url}/products?category=${encodeURIComponent(product.category)}`,
+          },
+          { name: product.title, url: canonical },
+        ])}
+      />
+      <ProductDetail
+        product={product}
+        action={
+          <AddToCartButton
+            productId={product.id}
+            title={product.title}
+            image={product.image}
+            unitPrice={product.price.amount}
+          />
+        }
+      />
+      <section className="mt-16">
+        <h2 className="mb-8 font-display text-4xl">
+          También en esta categoría
+        </h2>
+        <Suspense fallback={<GridSkeleton count={4} />}>
+          <RelatedProducts product={product} />
+        </Suspense>
+      </section>
+    </div>
+  );
+}
+
+async function RelatedProducts({ product }: { product: Product }) {
+  const related = await getRelated(product);
+  if (related.length === 0) return null;
+  return (
+    <ProductGrid
+      products={related}
+      renderAction={(item) => (
+        <AddToCartButton
+          productId={item.id}
+          title={item.title}
+          image={item.image}
+          unitPrice={item.price.amount}
+        />
+      )}
+    />
+  );
+}
