@@ -29,7 +29,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/products"
-            className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink"
+            className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
           >
             Ver el catálogo
           </Link>
@@ -76,7 +76,7 @@ async function CategoryRow() {
         <li key={category}>
           <Link
             href={catalogListingPath({ category })}
-            className="inline-flex rounded-full border border-line px-4 py-2 text-sm whitespace-nowrap hover:border-ink"
+            className="inline-flex rounded-full border border-line px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink hover:bg-ink/5 active:scale-[0.98]"
           >
             {categoryLabel(category)}
           </Link>
