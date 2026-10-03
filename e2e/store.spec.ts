@@ -13,6 +13,18 @@ test("category filter stays in the url after reload", async ({ page }) => {
   );
 });
 
+test("catalog page stays in the url after reload", async ({ page }) => {
+  await page.goto("/products");
+  await page.getByRole("link", { name: "Página 2" }).click();
+  await expect(page).toHaveURL(/page=2/);
+  await page.reload();
+  await expect(page).toHaveURL(/page=2/);
+  await expect(page.getByRole("link", { name: "Página 2" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+});
+
 test("search and sort update the url", async ({ page }) => {
   await page.goto("/products");
   await page.getByLabel("Buscar productos").fill("backpack");

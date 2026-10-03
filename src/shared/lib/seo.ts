@@ -3,8 +3,8 @@ import "server-only";
 import { catalogListingPath } from "@/modules/catalog/application/catalog-params.server";
 import { site } from "@/shared/config/site";
 
-export function catalogCanonical(category: string): string {
-  return new URL(catalogListingPath({ category }), site.url).toString();
+export function catalogCanonical(category: string, page = 1): string {
+  return new URL(catalogListingPath({ category, page }), site.url).toString();
 }
 
 export function productCanonical(id: number): string {

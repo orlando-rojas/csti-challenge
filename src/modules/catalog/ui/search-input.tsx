@@ -1,6 +1,6 @@
 "use client";
 
-import { debounce, useQueryState } from "nuqs";
+import { debounce, useQueryStates } from "nuqs";
 import { useEffect, useId, useTransition } from "react";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
@@ -14,13 +14,16 @@ export function SearchInput() {
     setCatalogPending(pendingId, isPending);
     return () => setCatalogPending(pendingId, false);
   }, [isPending, pendingId, setCatalogPending]);
-  const [q, setQ] = useQueryState(
-    "q",
-    catalogSearchParsers.q.withOptions({
+  const [{ q }, setQuery] = useQueryStates(
+    {
+      q: catalogSearchParsers.q,
+      page: catalogSearchParsers.page,
+    },
+    {
       shallow: false,
       limitUrlUpdates: debounce(300),
       startTransition,
-    }),
+    },
   );
 
   return (
@@ -35,7 +38,10 @@ export function SearchInput() {
         aria-busy={isPending}
         onChange={(event) => {
           const value = event.target.value;
-          void setQ(value.length > 0 ? value : null);
+          void setQuery({
+            q: value.length > 0 ? value : null,
+            page: null,
+          });
         }}
         className="h-11 w-full rounded-full border border-line bg-paper px-4 text-sm outline-none placeholder:text-muted"
       />

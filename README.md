@@ -328,14 +328,14 @@ curl -X POST http://localhost:3000/api/revalidate \
 ## Decisiones técnicas y trade-offs
 
 - **Carrito en `localStorage`.** Es suficiente sin checkout. La alternativa con cookie y Server Actions está descrita en el [ADR 0002](docs/adr/0002-cart-state.md).
-- **Filtrado, búsqueda y orden en el servidor** sobre el listado cacheado. Con 20 productos no se justifica paginación ni un índice de búsqueda.
+- **Filtrado, búsqueda, orden y paginación en el servidor.** La interfaz recibe una página del resultado. La fuente actual no ofrece `limit`/`offset`; cuando lo haga, el corte se mueve al repositorio sin cambiar la URL.
 - **Fixture de respaldo.** Si FakeStore no responde, se sirve una fixture local que no se cachea como una respuesta válida. Puede desactualizarse; las pruebas de contrato diarias lo detectan.
 - **Filtros de categoría como enlaces de servidor**, no como componente de cliente, para que buscadores y navegadores sin JavaScript puedan recorrerlos.
 - **Una sola instancia.** No hay caché distribuida; Valkey queda como evolución futura.
 
 ### Fuera de alcance
 
-Valkey, Sentry, internacionalización, PWA y paginación.
+Valkey, Sentry, internacionalización y PWA.
 
 ## Solución de problemas
 

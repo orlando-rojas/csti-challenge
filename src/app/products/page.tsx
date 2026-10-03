@@ -3,8 +3,11 @@ import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
+  catalogListingPath,
   catalogSearchParamsCache,
   CatalogListing,
+  CatalogPagination,
+  EmptyPage,
   EmptyState,
   getCatalog,
   GridSkeleton,
@@ -13,6 +16,7 @@ import {
   listCategories,
   ProductGrid,
   categoryLabel,
+  type CatalogPage,
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
@@ -23,16 +27,18 @@ export async function generateMetadata({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
   const query = await catalogSearchParamsCache.parse(searchParams);
-  const title = query.q
+  const baseTitle = query.q
     ? `Búsqueda: ${query.q}`
     : query.category
       ? categoryLabel(query.category)
       : "Catálogo";
+  const title =
+    query.page > 1 ? `${baseTitle} · Página ${query.page}` : baseTitle;
 
   return {
     title,
     description: "Electrónica, joyería y ropa disponibles ahora.",
-    alternates: { canonical: catalogCanonical(query.category) },
+    alternates: { canonical: catalogCanonical(query.category, query.page) },
     robots:
       query.q || !site.indexable
         ? { index: false, follow: true }
@@ -72,7 +78,7 @@ async function CatalogResults({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const query = await catalogSearchParamsCache.parse(searchParams);
-  const [products, categories] = await Promise.all([
+  const [catalog, categories] = await Promise.all([
     getCatalog(query),
     listCategories(),
   ]);
@@ -80,17 +86,27 @@ async function CatalogResults({
   return (
     <>
       <JsonLd
-        data={itemListStructuredData(products, (id) => productCanonical(id))}
+        data={itemListStructuredData(catalog.items, (id) =>
+          productCanonical(id),
+        )}
       />
       <CatalogListing categories={categories} query={query}>
         <p className="mb-6 text-sm text-muted" aria-live="polite">
-          {products.length.toLocaleString("es-PE")} productos
+          {catalogRangeLabel(catalog)}
         </p>
-        {products.length === 0 ? (
+        {catalog.total === 0 ? (
           <EmptyState />
+        ) : catalog.items.length === 0 ? (
+          <EmptyPage
+            href={catalogListingPath({
+              q: query.q,
+              category: query.category,
+              sort: query.sort,
+            })}
+          />
         ) : (
           <ProductGrid
-            products={products}
+            products={catalog.items}
             priorityCount={4}
             renderAction={(product) => (
               <AddToCartButton
@@ -102,7 +118,22 @@ async function CatalogResults({
             )}
           />
         )}
+        <CatalogPagination
+          query={query}
+          page={catalog.page}
+          pageCount={catalog.pageCount}
+        />
       </CatalogListing>
     </>
   );
+}
+
+function catalogRangeLabel(catalog: CatalogPage): string {
+  const total = catalog.total.toLocaleString("es-PE");
+  if (catalog.total === 0 || catalog.items.length === 0) {
+    return `${total} productos`;
+  }
+  const start = (catalog.page - 1) * catalog.pageSize + 1;
+  const end = start + catalog.items.length - 1;
+  return `${start.toLocaleString("es-PE")}–${end.toLocaleString("es-PE")} de ${total} productos`;
 }

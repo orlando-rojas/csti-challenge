@@ -22,5 +22,6 @@ export function catalogListingPath(query: Partial<CatalogQuery> = {}): string {
     q: query.q ? query.q : null,
     category: query.category ? query.category : null,
     sort: query.sort ? sortQueryValue(query.sort) : null,
+    page: query.page && query.page > 1 ? query.page : null,
   });
 }

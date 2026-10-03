@@ -6,7 +6,7 @@ import { AddToCartButton } from "@/modules/cart";
 import {
   breadcrumbStructuredData,
   categoryLabel,
-  getCatalog,
+  listProducts,
   getKnownProduct,
   getRelated,
   GridSkeleton,
@@ -20,7 +20,7 @@ import { site } from "@/shared/config/site";
 import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
 
 export async function generateStaticParams() {
-  const products = await getCatalog({ q: "", category: "", sort: "rating" });
+  const products = await listProducts();
   return products.map((product) => ({ id: String(product.id) }));
 }
 

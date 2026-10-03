@@ -1,6 +1,6 @@
 "use client";
 
-import { useQueryState } from "nuqs";
+import { useQueryStates } from "nuqs";
 import { useEffect, useId, useTransition } from "react";
 
 import {
@@ -18,12 +18,15 @@ export function SortSelect() {
     setCatalogPending(pendingId, isPending);
     return () => setCatalogPending(pendingId, false);
   }, [isPending, pendingId, setCatalogPending]);
-  const [sort, setSort] = useQueryState(
-    "sort",
-    catalogSearchParsers.sort.withOptions({
+  const [{ sort }, setQuery] = useQueryStates(
+    {
+      sort: catalogSearchParsers.sort,
+      page: catalogSearchParsers.page,
+    },
+    {
       shallow: false,
       startTransition,
-    }),
+    },
   );
 
   return (
@@ -37,7 +40,10 @@ export function SortSelect() {
         onChange={(event) => {
           const next = sortKeys.find((key) => key === event.target.value);
           if (!next) return;
-          void setSort(sortQueryValue(next));
+          void setQuery({
+            sort: sortQueryValue(next),
+            page: null,
+          });
         }}
         className="h-11 rounded-full border border-line bg-paper px-3 text-sm"
       >
