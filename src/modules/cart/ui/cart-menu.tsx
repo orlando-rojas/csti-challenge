@@ -15,6 +15,7 @@ const CartDrawer = dynamic(
 
 export function CartMenu() {
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const hydrated = useCartStore((state) => state.hasHydrated);
   const count = useCartStore((state) => itemCount(state.lines));
   const noun = count === 1 ? "artículo" : "artículos";
@@ -26,14 +27,17 @@ export function CartMenu() {
       <CartAnnouncer />
       <button
         type="button"
-        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-line px-3 text-sm"
+        className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-line px-3 text-sm transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink hover:bg-ink/5 active:scale-[0.98]"
         aria-label={label}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setHasOpened(true);
+          setOpen(true);
+        }}
       >
         Carrito
         <CartBadge />
       </button>
-      {open ? <CartDrawer open={open} onOpenChange={setOpen} /> : null}
+      {hasOpened ? <CartDrawer open={open} onOpenChange={setOpen} /> : null}
     </>
   );
 }
