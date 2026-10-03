@@ -1,12 +1,13 @@
-import Link from "next/link";
 import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
+  CatalogEntryLink,
   catalogListingPath,
   categoryLabel,
   getFeatured,
   GridSkeleton,
+  HomeCategoryLink,
   listCategories,
   ProductCard,
   type Product,
@@ -27,16 +28,16 @@ export default function HomePage() {
             Electrónica, joyería y ropa con ficha clara, precio visible y un
             carrito que se queda en este navegador.
           </p>
-          <Link
+          <CatalogEntryLink
             href="/products"
-            className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink"
+            className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
           >
             Ver el catálogo
-          </Link>
+          </CatalogEntryLink>
         </div>
         <Suspense
           fallback={
-            <div className="aspect-square animate-pulse rounded-[2rem] bg-ink/10" />
+            <div className="image-stage aspect-square animate-pulse rounded-[2rem]" />
           }
         >
           <HeroProduct />
@@ -50,9 +51,12 @@ export default function HomePage() {
       <section className="py-14">
         <div className="mb-8 flex items-end justify-between gap-4">
           <h2 className="font-display text-4xl">Destacados</h2>
-          <Link href="/products" className="text-sm text-muted hover:text-ink">
+          <CatalogEntryLink
+            href="/products"
+            className="text-sm text-muted hover:text-ink"
+          >
             Ver todo
-          </Link>
+          </CatalogEntryLink>
         </div>
         <Suspense fallback={<GridSkeleton count={4} />}>
           <FeaturedGrid />
@@ -74,12 +78,12 @@ async function CategoryRow() {
     <ul className="flex gap-2 overflow-auto pb-2">
       {categories.map((category) => (
         <li key={category}>
-          <Link
+          <HomeCategoryLink
+            category={category}
             href={catalogListingPath({ category })}
-            className="inline-flex rounded-full border border-line px-4 py-2 text-sm whitespace-nowrap hover:border-ink"
           >
             {categoryLabel(category)}
-          </Link>
+          </HomeCategoryLink>
         </li>
       ))}
     </ul>
@@ -89,10 +93,10 @@ async function CategoryRow() {
 async function FeaturedGrid() {
   const { rest } = await getFeatured();
   return (
-    <ul className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
-      {rest.map((product, index) => (
-        <li key={product.id}>
-          <FeaturedCard product={product} priority={index < 3} />
+    <ul className="grid grid-cols-2 items-stretch gap-x-4 gap-y-10 md:grid-cols-4">
+      {rest.map((product) => (
+        <li key={product.id} className="flex">
+          <FeaturedCard product={product} />
         </li>
       ))}
     </ul>

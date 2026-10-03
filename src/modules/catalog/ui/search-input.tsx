@@ -1,26 +1,22 @@
 "use client";
 
-import { debounce, useQueryState } from "nuqs";
-import { useEffect, useId, useTransition } from "react";
+import { debounce, useQueryStates } from "nuqs";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
-import { useSetCatalogPending } from "@/modules/catalog/ui/catalog-pending";
+import { useCatalogSearchTransition } from "@/modules/catalog/ui/catalog-pending";
 
 export function SearchInput() {
-  const [isPending, startTransition] = useTransition();
-  const pendingId = useId();
-  const setCatalogPending = useSetCatalogPending();
-  useEffect(() => {
-    setCatalogPending(pendingId, isPending);
-    return () => setCatalogPending(pendingId, false);
-  }, [isPending, pendingId, setCatalogPending]);
-  const [q, setQ] = useQueryState(
-    "q",
-    catalogSearchParsers.q.withOptions({
+  const { pending, startTransition } = useCatalogSearchTransition();
+  const [{ q }, setQuery] = useQueryStates(
+    {
+      q: catalogSearchParsers.q,
+      page: catalogSearchParsers.page,
+    },
+    {
       shallow: false,
       limitUrlUpdates: debounce(300),
       startTransition,
-    }),
+    },
   );
 
   return (
@@ -32,12 +28,15 @@ export function SearchInput() {
         id="catalog-search"
         value={q}
         placeholder="Buscar productos"
-        aria-busy={isPending}
+        aria-busy={pending}
         onChange={(event) => {
           const value = event.target.value;
-          void setQ(value.length > 0 ? value : null);
+          void setQuery({
+            q: value.length > 0 ? value : null,
+            page: null,
+          });
         }}
-        className="h-11 w-full rounded-full border border-line bg-paper px-4 text-sm outline-none placeholder:text-muted"
+        className="h-11 w-full rounded-full border border-line bg-surface px-4 text-sm outline-none placeholder:text-muted"
       />
     </div>
   );
