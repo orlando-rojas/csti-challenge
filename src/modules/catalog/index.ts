@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cacheLife, cacheTag } from "next/cache";
+
 import {
   filterCatalog,
   pickFeatured,
@@ -12,6 +14,11 @@ import type { Product } from "@/modules/catalog/domain/product";
 export { isCatalogProductId } from "@/modules/catalog/infrastructure/product-ids";
 
 export async function getCatalog(query: CatalogQuery): Promise<Product[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+  if (query.category) cacheTag(`category:${query.category}`);
+
   const products = await fakeStoreRepository.listProducts();
   return filterCatalog(products, query);
 }
