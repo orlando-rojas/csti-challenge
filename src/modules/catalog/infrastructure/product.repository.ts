@@ -40,6 +40,10 @@ export function createFakeStoreRepository(
     async listProducts() {
       try {
         const raw = await source.listProducts();
+        if (isCatalogSignal(raw, "missing")) throw new NotFoundError();
+        if (isCatalogSignal(raw, "unavailable")) {
+          throw new Error("FakeStore unavailable");
+        }
         return fakeStoreProductListSchema.parse(raw).map(mapProduct);
       } catch (error) {
         if (error instanceof NotFoundError) throw error;
@@ -50,6 +54,10 @@ export function createFakeStoreRepository(
     async listCategories() {
       try {
         const raw = await source.listCategories();
+        if (isCatalogSignal(raw, "missing")) throw new NotFoundError();
+        if (isCatalogSignal(raw, "unavailable")) {
+          throw new Error("FakeStore unavailable");
+        }
         return categoryListSchema.parse(raw);
       } catch (error) {
         if (error instanceof NotFoundError) throw error;
@@ -61,6 +69,10 @@ export function createFakeStoreRepository(
       if (!Number.isInteger(id) || id <= 0) return null;
       try {
         const raw = await source.getProduct(id);
+        if (isCatalogSignal(raw, "missing")) throw new NotFoundError();
+        if (isCatalogSignal(raw, "unavailable")) {
+          throw new Error("FakeStore unavailable");
+        }
         return mapProduct(fakeStoreProductSchema.parse(raw));
       } catch (error) {
         if (error instanceof NotFoundError) return null;
@@ -77,31 +89,59 @@ export function createFakeStoreRepository(
 
 const catalogRequest = { timeoutMs: 3_000, retries: 0 } as const;
 
+type CatalogSignalKind = "unavailable" | "missing";
+
+function catalogSignal(kind: CatalogSignalKind) {
+  return { catalogSignal: kind };
+}
+
+function isCatalogSignal(value: unknown, kind: CatalogSignalKind): boolean {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "catalogSignal" in value &&
+    value.catalogSignal === kind
+  );
+}
+
+// Five minutes is the shortest life the static shell will keep. A thrown
+// error inside "use cache" aborts prerender even when the caller catches it.
+const outageLife = { stale: 30, revalidate: 30, expire: 300 } as const;
+
+async function readCached(load: () => Promise<unknown>) {
+  try {
+    const data = await load();
+    cacheLife("hours");
+    return data;
+  } catch (error) {
+    cacheLife(outageLife);
+    if (error instanceof NotFoundError) return catalogSignal("missing");
+    return catalogSignal("unavailable");
+  }
+}
+
 async function readProducts() {
   "use cache";
-  cacheLife("hours");
   cacheTag("products");
-
-  return httpGet(`${env.FAKESTORE_API_URL}/products`, catalogRequest);
+  return readCached(() =>
+    httpGet(`${env.FAKESTORE_API_URL}/products`, catalogRequest),
+  );
 }
 
 async function readCategories() {
   "use cache";
-  cacheLife("hours");
   cacheTag("products");
-
-  return httpGet(
-    `${env.FAKESTORE_API_URL}/products/categories`,
-    catalogRequest,
+  return readCached(() =>
+    httpGet(`${env.FAKESTORE_API_URL}/products/categories`, catalogRequest),
   );
 }
 
 async function readProduct(id: number) {
   "use cache";
-  cacheLife("hours");
   cacheTag("products", `product:${id}`);
-
-  return httpGet(`${env.FAKESTORE_API_URL}/products/${id}`, catalogRequest);
+  return readCached(() =>
+    httpGet(`${env.FAKESTORE_API_URL}/products/${id}`, catalogRequest),
+  );
 }
 
 export const fakeStoreRepository: ProductRepository = createFakeStoreRepository(
