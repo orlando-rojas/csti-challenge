@@ -10,7 +10,7 @@ import {
   createFakeStoreRepository,
   type CatalogSource,
 } from "@/modules/catalog/infrastructure/product.repository";
-import { NotFoundError, httpGet } from "@/shared/lib/http";
+import { ApiError, NotFoundError, httpGet } from "@/shared/lib/http";
 
 const server = setupServer();
 const url = "https://fakestoreapi.com/products";
@@ -92,7 +92,35 @@ describe("catalog loading", () => {
     );
     const products = await invalid.listProducts();
     expect(products[0]?.id).toBe(productsFromFixture()[0]?.id);
+    expect(productsFromFixture()[0]?.image).toBe("/catalog/1.jpg");
     expect(await invalid.listCategories()).toEqual(categoriesFromFixture());
+
+    const blocked = createFakeStoreRepository(
+      source({
+        listProducts: async () => ({ catalogSignal: "unavailable" }),
+        listCategories: async () => ({ catalogSignal: "unavailable" }),
+        getProduct: async (id: number) =>
+          id === 1
+            ? { catalogSignal: "unavailable" }
+            : { catalogSignal: "missing" },
+      }),
+    );
+    expect(await blocked.listProducts()).toHaveLength(
+      productsFromFixture().length,
+    );
+    expect(await blocked.listCategories()).toEqual(categoriesFromFixture());
+    expect((await blocked.getProduct(1))?.id).toBe(1);
+    await expect(blocked.getProduct(99999)).resolves.toBeNull();
+  });
+
+  it("rejects an HTML body instead of parsing it", async () => {
+    server.use(
+      http.get(url, () =>
+        HttpResponse.html("<!DOCTYPE html><html></html>", { status: 200 }),
+      ),
+    );
+
+    await expect(httpGet(url, { retries: 0 })).rejects.toBeInstanceOf(ApiError);
   });
 
   it("returns null for a missing product and the fixture product when the call fails", async () => {
