@@ -75,12 +75,14 @@ export function createFakeStoreRepository(
   };
 }
 
+const catalogRequest = { timeoutMs: 3_000, retries: 0 } as const;
+
 async function readProducts() {
   "use cache";
   cacheLife("hours");
   cacheTag("products");
 
-  return httpGet(`${env.FAKESTORE_API_URL}/products`);
+  return httpGet(`${env.FAKESTORE_API_URL}/products`, catalogRequest);
 }
 
 async function readCategories() {
@@ -88,7 +90,10 @@ async function readCategories() {
   cacheLife("hours");
   cacheTag("products");
 
-  return httpGet(`${env.FAKESTORE_API_URL}/products/categories`);
+  return httpGet(
+    `${env.FAKESTORE_API_URL}/products/categories`,
+    catalogRequest,
+  );
 }
 
 async function readProduct(id: number) {
@@ -96,7 +101,7 @@ async function readProduct(id: number) {
   cacheLife("hours");
   cacheTag("products", `product:${id}`);
 
-  return httpGet(`${env.FAKESTORE_API_URL}/products/${id}`);
+  return httpGet(`${env.FAKESTORE_API_URL}/products/${id}`, catalogRequest);
 }
 
 export const fakeStoreRepository: ProductRepository = createFakeStoreRepository(
