@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { pillClass } from "@/shared/ui/pill";
+
 const categoryShare = {
   "category-nav": "category-move",
   default: "none",
@@ -76,9 +78,6 @@ export function ForgetPendingCategory() {
   return null;
 }
 
-const homeChipClass =
-  "inline-flex rounded-full border border-line bg-surface px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]";
-
 export function HomeCategoryLink({
   category,
   href,
@@ -95,7 +94,7 @@ export function HomeCategoryLink({
         prefetch={true}
         transitionTypes={["category-nav"]}
         onClick={() => rememberCategoryTransition(category)}
-        className={homeChipClass}
+        className={pillClass()}
       >
         {children}
       </Link>

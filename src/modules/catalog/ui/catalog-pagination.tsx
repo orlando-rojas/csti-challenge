@@ -4,6 +4,7 @@ import type { CatalogQuery } from "@/modules/catalog/application/filter-catalog"
 import { catalogListingPath } from "@/modules/catalog/application/catalog-params.server";
 import { pageWindow } from "@/modules/catalog/application/paginate";
 import { cn } from "@/shared/lib/utils";
+import { pillClass } from "@/shared/ui/pill";
 
 export function CatalogPagination({
   query,
@@ -18,8 +19,6 @@ export function CatalogPagination({
 
   const items = pageWindow(page, pageCount);
   const previousPage = page > pageCount ? pageCount : page - 1;
-  const linkClass =
-    "inline-flex h-10 min-w-10 items-center justify-center rounded-full border px-3 text-sm transition-[color,background-color,border-color,transform] duration-200 ease-out active:scale-[0.98]";
 
   return (
     <nav
@@ -30,7 +29,7 @@ export function CatalogPagination({
         href={catalogListingPath({ ...query, page: previousPage })}
         label="Anterior"
         enabled={page > 1}
-        className={linkClass}
+        className={pillClass({ size: "page" })}
       />
       <ol className="flex flex-wrap items-center justify-center gap-2">
         {items.map((item, index) =>
@@ -48,12 +47,10 @@ export function CatalogPagination({
                 href={catalogListingPath({ ...query, page: item })}
                 aria-label={`Página ${item}`}
                 {...(item === page ? { "aria-current": "page" as const } : {})}
-                className={cn(
-                  linkClass,
-                  item === page
-                    ? "border-ink bg-ink text-paper"
-                    : "border-line bg-surface hover:border-ink",
-                )}
+                className={pillClass({
+                  size: "page",
+                  selected: item === page,
+                })}
               >
                 {item}
               </Link>
@@ -65,7 +62,7 @@ export function CatalogPagination({
         href={catalogListingPath({ ...query, page: page + 1 })}
         label="Siguiente"
         enabled={page < pageCount}
-        className={linkClass}
+        className={pillClass({ size: "page" })}
       />
     </nav>
   );
@@ -86,10 +83,7 @@ function PageControl({
     return (
       <span
         aria-disabled="true"
-        className={cn(
-          className,
-          "border-line bg-surface text-muted opacity-50",
-        )}
+        className={cn(className, "cursor-default text-muted opacity-50")}
       >
         {label}
       </span>
@@ -97,11 +91,7 @@ function PageControl({
   }
 
   return (
-    <Link
-      href={href}
-      prefetch={true}
-      className={cn(className, "border-line bg-surface hover:border-ink")}
-    >
+    <Link href={href} prefetch={true} className={className}>
       {label}
     </Link>
   );

@@ -9,7 +9,10 @@ import { itemCount, subtotal } from "@/modules/cart/domain/cart";
 import { useCartStore } from "@/modules/cart/store/cart-store";
 import { formatMoney } from "@/shared/lib/format";
 import { cn } from "@/shared/lib/utils";
+import { Button, buttonVariants } from "@/shared/ui/button";
 import { ClampedText } from "@/shared/ui/clamped-text";
+import { Eyebrow } from "@/shared/ui/eyebrow";
+import { ImageFrame } from "@/shared/ui/image-frame";
 import { ProductImage } from "@/shared/ui/product-image";
 
 function lineImage(image: string, productId: number): string {
@@ -74,9 +77,7 @@ export function CartDrawer({
         >
           <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-5">
             <div>
-              <p className="text-xs tracking-[0.16em] text-muted uppercase">
-                Carrito
-              </p>
+              <Eyebrow>Carrito</Eyebrow>
               <Dialog.Title className="mt-1 font-display text-4xl leading-none">
                 Tu carrito
               </Dialog.Title>
@@ -86,7 +87,7 @@ export function CartDrawer({
             </div>
             <Dialog.Close
               aria-label="Cerrar"
-              className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-line transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink hover:bg-ink/5 active:scale-[0.98]"
+              className={buttonVariants({ variant: "outline", size: "icon" })}
             >
               <X className="size-4" />
             </Dialog.Close>
@@ -103,10 +104,7 @@ export function CartDrawer({
                 Las piezas que agregues aparecen en esta lista.
               </p>
               <Dialog.Close asChild>
-                <Link
-                  href="/products"
-                  className="mt-6 inline-flex h-11 items-center rounded-full bg-accent px-5 text-sm text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
-                >
+                <Link href="/products" className={cn(buttonVariants(), "mt-6")}>
                   Ver el catálogo
                 </Link>
               </Dialog.Close>
@@ -126,14 +124,14 @@ export function CartDrawer({
                     finishRemove(line.productId);
                   }}
                 >
-                  <div className="image-stage relative size-24 shrink-0 overflow-hidden rounded-3xl">
+                  <ImageFrame className="size-24 shrink-0 rounded-3xl">
                     <ProductImage
                       src={lineImage(line.image, line.productId)}
                       alt=""
                       sizes="96px"
                       className="object-contain p-3"
                     />
-                  </div>
+                  </ImageFrame>
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex items-start justify-between gap-3">
                       <ClampedText lines={2} className="text-sm leading-snug">
@@ -150,9 +148,9 @@ export function CartDrawer({
                     ) : null}
                     <div className="mt-auto flex items-center gap-3 pt-3">
                       <div className="inline-flex items-center rounded-full border border-line">
-                        <button
-                          type="button"
-                          className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full transition-[color,background-color,transform] duration-200 ease-out hover:bg-ink/5 active:scale-[0.98]"
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
                           aria-label={`Disminuir cantidad de ${line.title}`}
                           onClick={() => {
                             if (line.qty <= 1) beginRemove(line.productId);
@@ -160,18 +158,18 @@ export function CartDrawer({
                           }}
                         >
                           −
-                        </button>
+                        </Button>
                         <span className="w-6 text-center text-sm tabular-nums">
                           {line.qty}
                         </span>
-                        <button
-                          type="button"
-                          className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full transition-[color,background-color,transform] duration-200 ease-out hover:bg-ink/5 active:scale-[0.98]"
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
                           aria-label={`Aumentar cantidad de ${line.title}`}
                           onClick={() => setQty(line.productId, line.qty + 1)}
                         >
                           +
-                        </button>
+                        </Button>
                       </div>
                       <button
                         type="button"

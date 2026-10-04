@@ -22,6 +22,8 @@ import {
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
+import { Container } from "@/shared/ui/container";
+import { Eyebrow } from "@/shared/ui/eyebrow";
 
 export const prefetch = "partial";
 
@@ -56,17 +58,15 @@ export default function ProductsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <Container className="py-10">
       <header className="max-w-2xl">
-        <p className="text-xs tracking-[0.16em] text-muted uppercase">
-          Catálogo
-        </p>
+        <Eyebrow>Catálogo</Eyebrow>
         <h1 className="mt-2 font-display text-5xl">Todo el inventario</h1>
       </header>
       <CatalogListing sidebar={<CategorySidebar searchParams={searchParams} />}>
         <CatalogResults searchParams={searchParams} />
       </CatalogListing>
-    </div>
+    </Container>
   );
 }
 

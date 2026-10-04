@@ -4,6 +4,8 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 
+import { Button } from "@/shared/ui/button";
+
 function subscribe() {
   return () => {};
 }
@@ -31,9 +33,10 @@ export function ThemeToggle() {
   const dark = mounted && resolvedTheme === "dark";
 
   return (
-    <button
-      type="button"
-      className="group inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-line bg-surface transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
+    <Button
+      variant="outline"
+      size="icon"
+      className="group bg-surface"
       aria-label={dark ? "Activar modo claro" : "Activar modo oscuro"}
       onClick={() => {
         beginThemeTransition();
@@ -45,6 +48,6 @@ export function ThemeToggle() {
       ) : (
         <Moon className="size-4 transition-transform duration-200 ease-out group-hover:-rotate-12" />
       )}
-    </button>
+    </Button>
   );
 }

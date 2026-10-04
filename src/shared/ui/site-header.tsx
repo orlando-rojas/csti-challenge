@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { Container } from "@/shared/ui/container";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 
 export function SiteHeader({
@@ -12,7 +13,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="border-b border-line bg-paper">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:gap-6">
+      <Container className="flex h-16 items-center gap-3 sm:gap-6">
         <Link
           href="/"
           className="font-display text-2xl tracking-tight transition-opacity duration-200 ease-out hover:opacity-70"
@@ -26,7 +27,7 @@ export function SiteHeader({
           <ThemeToggle />
           {cart}
         </div>
-      </div>
+      </Container>
     </header>
   );
 }

@@ -5,7 +5,12 @@ import { ViewTransition } from "react";
 import { catalogListingPath } from "@/modules/catalog/application/catalog-params.server";
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import type { Product } from "@/modules/catalog/domain/product";
+import {
+  productImageShare,
+  productTitleShare,
+} from "@/modules/catalog/ui/product-transition";
 import { formatMoney, formatRating } from "@/shared/lib/format";
+import { ImageFrame } from "@/shared/ui/image-frame";
 import { ProductImage } from "@/shared/ui/product-image";
 
 export function ProductDetail({
@@ -19,12 +24,12 @@ export function ProductDetail({
     <article className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
       <ViewTransition
         name={`product-${product.id}`}
-        share={{ "nav-forward": "auto", default: "none" }}
+        share={productImageShare}
         enter="none"
         exit="none"
         default="none"
       >
-        <div className="image-stage relative aspect-square overflow-hidden rounded-[2rem]">
+        <ImageFrame className="aspect-square rounded-[2rem]">
           <ProductImage
             src={product.image}
             alt={product.title}
@@ -32,7 +37,7 @@ export function ProductDetail({
             sizes="(max-width: 1024px) 100vw, 560px"
             className="object-contain p-10"
           />
-        </div>
+        </ImageFrame>
       </ViewTransition>
       <div>
         <nav aria-label="Miga de pan" className="text-sm text-muted">
@@ -61,7 +66,7 @@ export function ProductDetail({
         </nav>
         <ViewTransition
           name={`product-title-${product.id}`}
-          share={{ "nav-forward": "product-title", default: "none" }}
+          share={productTitleShare}
           enter="none"
           exit="none"
           default="none"

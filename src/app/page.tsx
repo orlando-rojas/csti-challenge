@@ -10,17 +10,20 @@ import {
   HomeCategoryLink,
   listCategories,
   ProductCard,
+  ProductGrid,
   type Product,
 } from "@/modules/catalog";
+import { buttonVariants } from "@/shared/ui/button";
+import { Container } from "@/shared/ui/container";
+import { Eyebrow } from "@/shared/ui/eyebrow";
+import { ImageFrame } from "@/shared/ui/image-frame";
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl px-4">
+    <Container>
       <section className="grid items-center gap-10 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
         <div>
-          <p className="text-xs tracking-[0.18em] text-muted uppercase">
-            Selección de temporada
-          </p>
+          <Eyebrow>Selección de temporada</Eyebrow>
           <h1 className="mt-4 max-w-xl font-display text-5xl leading-[1.05] md:text-7xl">
             Menos ruido. Mejores objetos.
           </h1>
@@ -30,14 +33,14 @@ export default function HomePage() {
           </p>
           <CatalogEntryLink
             href="/products"
-            className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-6 text-accent-ink transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.98]"
+            className={buttonVariants({ size: "lg", className: "mt-8" })}
           >
             Ver el catálogo
           </CatalogEntryLink>
         </div>
         <Suspense
           fallback={
-            <div className="image-stage aspect-square animate-pulse rounded-[2rem]" />
+            <ImageFrame className="aspect-square animate-pulse rounded-[2rem]" />
           }
         >
           <HeroProduct />
@@ -62,14 +65,20 @@ export default function HomePage() {
           <FeaturedGrid />
         </Suspense>
       </section>
-    </div>
+    </Container>
   );
 }
 
 async function HeroProduct() {
   const { hero } = await getFeatured();
   if (!hero) return null;
-  return <FeaturedCard product={hero} priority />;
+  return (
+    <ProductCard
+      product={hero}
+      priority
+      action={<ProductCartAction product={hero} />}
+    />
+  );
 }
 
 async function CategoryRow() {
@@ -93,35 +102,21 @@ async function CategoryRow() {
 async function FeaturedGrid() {
   const { rest } = await getFeatured();
   return (
-    <ul className="grid grid-cols-2 items-stretch gap-x-4 gap-y-10 md:grid-cols-4">
-      {rest.map((product) => (
-        <li key={product.id} className="flex">
-          <FeaturedCard product={product} />
-        </li>
-      ))}
-    </ul>
+    <ProductGrid
+      products={rest}
+      columns={4}
+      renderAction={(product) => <ProductCartAction product={product} />}
+    />
   );
 }
 
-function FeaturedCard({
-  product,
-  priority = false,
-}: {
-  product: Product;
-  priority?: boolean;
-}) {
+function ProductCartAction({ product }: { product: Product }) {
   return (
-    <ProductCard
-      product={product}
-      priority={priority}
-      action={
-        <AddToCartButton
-          productId={product.id}
-          title={product.title}
-          image={product.image}
-          unitPrice={product.price.amount}
-        />
-      }
+    <AddToCartButton
+      productId={product.id}
+      title={product.title}
+      image={product.image}
+      unitPrice={product.price.amount}
     />
   );
 }
