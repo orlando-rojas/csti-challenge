@@ -65,7 +65,7 @@ function StorefrontDemo() {
 const meta = {
   title: "Demo/Storefront",
   component: StorefrontDemo,
-  parameters: { layout: "fullscreen" },
+  parameters: { layout: "fullscreen", themeMode: "live" },
 } satisfies Meta<typeof StorefrontDemo>;
 
 export default meta;

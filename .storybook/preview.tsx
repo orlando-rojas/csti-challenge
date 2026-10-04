@@ -64,6 +64,11 @@ const preview: Preview = {
   parameters: {
     layout: "padded",
     backgrounds: { disable: true },
+    nextjs: {
+      appDirectory: true,
+      // The static Storybook build has no image optimizer. Serve remote srcs as-is.
+      image: { unoptimized: true },
+    },
   },
 };
 
