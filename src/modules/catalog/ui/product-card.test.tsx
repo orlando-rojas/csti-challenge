@@ -27,7 +27,7 @@ describe("ProductCard", () => {
     render(<ProductCard product={product} />);
 
     const detail = screen
-      .getByRole("heading", { name: product.title })
+      .getByRole("heading", { level: 2, name: product.title })
       .closest("a");
     const preview = screen.getByTestId("product-preview");
 

@@ -20,7 +20,7 @@ const clampClass = {
 type ClampLines = keyof typeof clampClass;
 
 type ClampedTextProps = {
-  as?: "p" | "h3";
+  as?: "p" | "h2" | "h3";
   lines: ClampLines;
   children: string;
   ref?: Ref<HTMLElement>;
