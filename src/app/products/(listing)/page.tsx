@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { AddToCartButton } from "@/modules/cart";
 import {
   catalogListingPath,
   catalogSearchParamsCache,
@@ -10,13 +9,13 @@ import {
   CatalogPagination,
   CatalogResultsFrame,
   CategoryFilter,
+  DeferredProductGrid,
   EmptyPage,
   EmptyState,
   getCatalog,
   itemListStructuredData,
   JsonLd,
   listCategories,
-  ProductGrid,
   SearchInput,
   SortSelect,
   categoryLabel,
@@ -111,17 +110,11 @@ async function CatalogContent({
             })}
           />
         ) : (
-          <ProductGrid
-            products={catalog.items}
-            priorityCount={2}
-            renderAction={(product) => (
-              <AddToCartButton
-                productId={product.id}
-                title={product.title}
-                image={product.image}
-                unitPrice={product.price.amount}
-              />
-            )}
+          <DeferredProductGrid
+            products={catalog.items.map((product) => ({
+              ...product,
+              description: "",
+            }))}
           />
         )}
         <CatalogPagination

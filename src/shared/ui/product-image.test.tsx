@@ -1,28 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import type { ImgHTMLAttributes } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { ProductImage } from "@/shared/ui/product-image";
-
-vi.mock("next/image", () => ({
-  default: ({
-    alt,
-    src,
-    sizes,
-    className,
-    onError,
-  }: ImgHTMLAttributes<HTMLImageElement>) => (
-    // The mock stands in for next/image so the test can fire a load error.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      alt={alt}
-      src={src}
-      sizes={sizes}
-      className={className}
-      onError={onError}
-    />
-  ),
-}));
 
 describe("ProductImage", () => {
   it("replaces a failed photo with the fallback art", () => {

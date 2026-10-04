@@ -10,13 +10,14 @@ import {
   HomeCategoryLink,
   listCategories,
   ProductCard,
-  ProductGrid,
+  DeferredProductGrid,
   type Product,
 } from "@/modules/catalog";
 import { buttonVariants } from "@/shared/ui/button";
 import { Container } from "@/shared/ui/container";
 import { Eyebrow } from "@/shared/ui/eyebrow";
 import { ImageFrame } from "@/shared/ui/image-frame";
+import { inlineCatalogImage } from "@/shared/lib/inline-catalog-image";
 
 export default function HomePage() {
   return (
@@ -72,11 +73,28 @@ export default function HomePage() {
 async function HeroProduct() {
   const { hero } = await getFeatured();
   if (!hero) return null;
+  const imageSrc = await inlineCatalogImage(hero.image, 256, 40);
   return (
     <ProductCard
       product={hero}
       priority
       action={<ProductCartAction product={hero} />}
+      {...(imageSrc
+        ? {
+            image: (
+              // The hero photo is inlined so it can paint before the framework script.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageSrc}
+                alt={hero.title}
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                fetchPriority="high"
+                decoding="auto"
+                className="absolute inset-0 h-full w-full object-contain p-6 transition-transform duration-300 group-hover:scale-[1.03]"
+              />
+            ),
+          }
+        : {})}
     />
   );
 }
@@ -101,14 +119,7 @@ async function CategoryRow() {
 
 async function FeaturedGrid() {
   const { rest } = await getFeatured();
-  return (
-    <ProductGrid
-      products={rest}
-      columns={4}
-      titleLevel="h3"
-      renderAction={(product) => <ProductCartAction product={product} />}
-    />
-  );
+  return <DeferredProductGrid products={rest} columns={4} titleLevel="h3" />;
 }
 
 function ProductCartAction({ product }: { product: Product }) {
