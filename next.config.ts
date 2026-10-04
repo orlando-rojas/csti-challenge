@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   output: "standalone",
   poweredByHeader: false,
+  experimental: {
+    // The stylesheet is the only request that delays first paint on localhost,
+    // which pulls every script into Lighthouse's simulated LCP.
+    inlineCss: true,
+  },
   images: {
     formats: ["image/webp"],
     remotePatterns: [
