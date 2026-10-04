@@ -5,27 +5,22 @@ import path from "node:path";
 
 import sharp from "sharp";
 
-const cache = new Map<string, Promise<string | null>>();
-
 export function inlineCatalogImage(
   src: string,
   width: number,
   quality = 45,
 ): Promise<string | null> {
-  const key = `${src}@${width}@${quality}`;
-  const existing = cache.get(key);
-  if (existing) return existing;
-
-  const pending = encode(src, width, quality);
-  cache.set(key, pending);
-  return pending;
+  return encode(src, width, quality);
 }
 
+// "use cache" dedupes by arguments. A module Map of in-flight promises
+// deadlocks that fill when two renders share it.
 async function encode(
   src: string,
   width: number,
   quality: number,
 ): Promise<string | null> {
+  "use cache";
   if (!src.startsWith("/catalog/") || src.includes("..")) return null;
 
   try {

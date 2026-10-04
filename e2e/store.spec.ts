@@ -100,6 +100,9 @@ test("product metadata and json-ld are present", async ({ page }) => {
 test("home, catalog and product have no axe violations", async ({ page }) => {
   for (const path of ["/", "/products", "/products/1"]) {
     await page.goto(path);
+    // The product title streams in after the shell. The shell's skeleton is
+    // hidden from the accessibility tree, so axe must wait for the real h1.
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
   }
