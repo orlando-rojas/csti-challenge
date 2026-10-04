@@ -2,12 +2,13 @@ name: Storybook
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - "src/**/*.tsx"
       - "src/**/*.css"
       - ".storybook/**"
       - "Dockerfile.storybook"
+      - "docker-compose.storybook.yml"
       - "package.json"
       - "pnpm-lock.yaml"
 
@@ -31,7 +32,9 @@ jobs:
           context: .
           file: Dockerfile.storybook
           push: true
-          tags: ghcr.io/${{ github.repository }}-storybook:${{ github.sha }}
+          tags: |
+            ghcr.io/${{ github.repository }}-storybook:${{ github.sha }}
+            ghcr.io/${{ github.repository }}-storybook:latest
       - name: Redeploy Storybook on Dokploy
         env:
           DOKPLOY_STORYBOOK_WEBHOOK_URL: ${{ secrets.DOKPLOY_STORYBOOK_WEBHOOK_URL }}

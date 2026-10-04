@@ -1,0 +1,24 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: services/fakestore/Dockerfile
+    image: ghcr.io/orlando-rojas/csti-challenge-fakestore:latest
+    restart: unless-stopped
+    expose:
+      - "4010"
+    environment:
+      PORT: "4010"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.csti-challenge-fakestore-web.rule=Host(`csti-challenge-fakestore.orlando-rojas.com`)
+      - traefik.http.routers.csti-challenge-fakestore-web.entrypoints=web
+      - traefik.http.routers.csti-challenge-fakestore-web.service=csti-challenge-fakestore-web
+      - traefik.http.services.csti-challenge-fakestore-web.loadbalancer.server.port=4010
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true

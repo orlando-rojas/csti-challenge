@@ -53,7 +53,7 @@ storybook-static
 .env.local
 .env*.local
 
-# photos downloaded by the local Fake Store stand-in
+# leftover photos from the old stand-in image cache
 /services/fakestore/img/
 
 # os

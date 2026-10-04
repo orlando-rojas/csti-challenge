@@ -138,9 +138,15 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 Consulta [Variables de entorno](#variables-de-entorno) para el detalle de cada una.
 
-### 4. Sustituto local de FakeStore (opcional)
+### 4. Sustituto de FakeStore (opcional)
 
-`https://fakestoreapi.com` a veces no responde. `pnpm fakestore` levanta un servicio en [http://localhost:4010](http://localhost:4010) con los mismos endpoints que usa la tienda: `GET /products`, `GET /products/categories` y `GET /products/:id`. El catálogo sale de la fixture del repositorio. En el primer arranque descarga las fotos del repositorio público de Fake Store y las guarda en `services/fakestore/img` (esa carpeta no se versiona).
+`https://fakestoreapi.com` a veces no responde. El servicio en `services/fakestore` expone los mismos endpoints que usa la tienda: `GET /products`, `GET /products/categories` y `GET /products/:id`. El catálogo sale de la fixture del repositorio. Las fotos quedan en el espejo público de Fake Store, así que la tienda no depende de dónde corra el servicio.
+
+En local, en otra terminal:
+
+```bash
+pnpm fakestore
+```
 
 En `.env.local`:
 
@@ -148,13 +154,14 @@ En `.env.local`:
 FAKESTORE_API_URL=http://localhost:4010
 ```
 
-En otra terminal:
+El puerto se cambia con `PORT` o `FAKESTORE_PORT` (por defecto `4010`). Para probar la imagen en local, desde la raíz del repositorio:
 
 ```bash
-pnpm fakestore
+docker build -f services/fakestore/Dockerfile -t fakestore .
+docker run --rm -p 4010:4010 fakestore
 ```
 
-El puerto se cambia con `FAKESTORE_PORT`. En desarrollo, Next acepta las imágenes de ese origen. El valor por defecto de producción sigue siendo `https://fakestoreapi.com`. Cuando la API pública vuelva, quita `FAKESTORE_API_URL` de `.env.local` y reinicia `pnpm dev`.
+En Dokploy el servicio es una aplicación Compose aparte, con [`docker-compose.fakestore.yml`](docker-compose.fakestore.yml), en `https://csti-challenge-fakestore.orlando-rojas.com`. El compose de la tienda ya apunta `FAKESTORE_API_URL` a ese host. En local el único cambio sigue siendo esa variable. Cuando la API pública vuelva, vuelve a `https://fakestoreapi.com`.
 
 ### 5. Iniciar el servidor de desarrollo
 
@@ -187,7 +194,7 @@ Las variables se validan al arrancar con Zod en [`src/shared/config/env.ts`](src
 | ----------------------------- | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`        | No        | `https://csti-challenge.orlando-rojas.com` | Origen canónico usado en metadata, sitemap y Open Graph. Se incrusta en el bundle durante el build. |
 | `SITE_INDEXABLE`              | No        | `true`                                     | `false` agrega `noindex` y bloquea el rastreo (se usa en el espejo de Vercel).                      |
-| `FAKESTORE_API_URL`           | No        | `https://fakestoreapi.com`                 | URL base de la API de catálogo. En local puede ser `http://localhost:4010` (`pnpm fakestore`).      |
+| `FAKESTORE_API_URL`           | No        | `https://fakestoreapi.com`                 | URL base de la API de catálogo. Es el único ajuste para apuntar a un servicio compatible.           |
 | `REVALIDATE_SECRET`           | No        | —                                          | Secreto (mínimo 8 caracteres) para `POST /api/revalidate`. Sin él, el endpoint responde `401`.      |
 | `LOG_LEVEL`                   | No        | `info`                                     | Nivel de Pino: `fatal`, `error`, `warn`, `info`, `debug`, `trace` o `silent`.                       |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | No        | —                                          | Endpoint OTLP (por ejemplo, Grafana Cloud). Sin él, no se exporta telemetría.                       |
@@ -200,7 +207,7 @@ Las variables se validan al arrancar con Zod en [`src/shared/config/env.ts`](src
 | Script                 | Descripción                                                  |
 | ---------------------- | ------------------------------------------------------------ |
 | `pnpm dev`             | Servidor de desarrollo con recarga en caliente.              |
-| `pnpm fakestore`       | Sustituto local de FakeStore en el puerto 4010.              |
+| `pnpm fakestore`       | Sustituto de FakeStore en el puerto 4010.                    |
 | `pnpm build`           | Build de producción (salida `standalone`).                   |
 | `pnpm start`           | Sirve el build de producción.                                |
 | `pnpm typecheck`       | Verificación de tipos con `tsc --noEmit`.                    |
@@ -288,9 +295,20 @@ Para cambiar la URL canónica, pásala como argumento de build, ya que se incrus
 docker build --build-arg NEXT_PUBLIC_SITE_URL=http://localhost:3000 -t csti-challenge .
 ```
 
-El resto de las variables se pasan en tiempo de ejecución con `-e` o `--env-file .env.local`. La imagen se ejecuta con un usuario sin privilegios, expone el puerto `3000` e incluye un `HEALTHCHECK` sobre `/api/health`. Para conservar la caché entre despliegues, monta un volumen en `/app/.next/cache`.
+El resto de las variables se pasan en tiempo de ejecución con `-e` o `--env-file .env.local`. Entre ellas, `FAKESTORE_API_URL` es el único ajuste para apuntar a otro catálogo. La imagen se ejecuta con un usuario sin privilegios, expone el puerto `3000` e incluye un `HEALTHCHECK` sobre `/api/health`. Para conservar la caché entre despliegues, monta un volumen en `/app/.next/cache`. En Dokploy usa [`docker-compose.yml`](docker-compose.yml).
+
+### Sustituto de FakeStore
+
+```bash
+docker build -f services/fakestore/Dockerfile -t csti-challenge-fakestore .
+docker run --rm -p 4010:4010 csti-challenge-fakestore
+```
+
+Dokploy lo despliega con [`docker-compose.fakestore.yml`](docker-compose.fakestore.yml). El dominio es `csti-challenge-fakestore.orlando-rojas.com` y el healthcheck usa `GET /health`.
 
 ### Storybook
+
+Dokploy lo despliega con [`docker-compose.storybook.yml`](docker-compose.storybook.yml) en `https://csti-challenge-storybook.orlando-rojas.com`.
 
 ```bash
 docker build -f Dockerfile.storybook -t csti-challenge-storybook .
@@ -316,12 +334,21 @@ curl -X POST http://localhost:3000/api/revalidate \
 
 ## Integración y despliegue continuo
 
-| Workflow        | Disparador                      | Responsabilidad                                                                                 |
-| --------------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `ci.yml`        | PR y push a `main`              | Job `verify`: typecheck, lint, pruebas unitarias y build.                                       |
-| `release.yml`   | Push a `main`                   | Construye la imagen, ejecuta E2E y Lighthouse, publica en GHCR y despliega en Dokploy y Vercel. |
-| `contract.yml`  | Diario y manual                 | Pruebas de contrato contra FakeStore; abre un issue si fallan.                                  |
-| `storybook.yml` | Push a `main` con cambios de UI | Build y publicación de Storybook.                                                               |
+| Workflow        | Disparador                                | Responsabilidad                                                                                 |
+| --------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `ci.yml`        | PR y push a `master`                      | Job `verify`: typecheck, lint, pruebas unitarias y build.                                       |
+| `release.yml`   | Push a `master`                           | Construye la imagen, ejecuta E2E y Lighthouse, publica en GHCR y despliega en Dokploy y Vercel. |
+| `contract.yml`  | Diario y manual                           | Pruebas de contrato contra FakeStore; abre un issue si fallan.                                  |
+| `storybook.yml` | Push a `master` con cambios de UI         | Build y publicación de Storybook.                                                               |
+| `fakestore.yml` | Push a `master` con cambios del sustituto | Publica `ghcr.io/orlando-rojas/csti-challenge-fakestore` y redespliega en Dokploy.              |
+
+**Dokploy (proyecto `orlando-rojas`):** tres servicios Compose en el CT de Dokploy, cada uno con su `docker-compose*.yml` y labels Traefik hacia Cloudflare Tunnel:
+
+| Servicio  | Compose                        | Dominio                                      | Secret GitHub (webhook)         |
+| --------- | ------------------------------ | -------------------------------------------- | ------------------------------- |
+| Tienda    | `docker-compose.yml`           | `csti-challenge.orlando-rojas.com`           | `DOKPLOY_WEBHOOK_URL`           |
+| Storybook | `docker-compose.storybook.yml` | `csti-challenge-storybook.orlando-rojas.com` | `DOKPLOY_STORYBOOK_WEBHOOK_URL` |
+| FakeStore | `docker-compose.fakestore.yml` | `csti-challenge-fakestore.orlando-rojas.com` | `DOKPLOY_FAKESTORE_WEBHOOK_URL` |
 
 **Flujo de release:** la imagen se publica como `ghcr.io/orlando-rojas/csti-challenge:<sha>` y `:latest`. Si los secretos están configurados, el workflow llama al webhook de Dokploy, ejecuta un smoke test sobre el dominio principal y publica el espejo con `vercel deploy --prebuilt --prod`.
 
@@ -334,7 +361,7 @@ curl -X POST http://localhost:3000/api/revalidate \
 - El HTML no se cachea en el borde.
 - SSL Full (strict), HSTS y Brotli activados.
 
-**Espejo en Vercel:** `NEXT_PUBLIC_SITE_URL` apunta al dominio principal y `SITE_INDEXABLE=false`, para no competir en buscadores.
+**Espejo en Vercel:** `NEXT_PUBLIC_SITE_URL` apunta al dominio principal y `SITE_INDEXABLE=false`, para no competir en buscadores. Para usar el mismo catálogo, define `FAKESTORE_API_URL=https://csti-challenge-fakestore.orlando-rojas.com` en el proyecto de Vercel.
 
 ## Lineamientos de contribución
 
@@ -358,11 +385,11 @@ Valkey, Sentry, internacionalización y PWA.
 
 ## Solución de problemas
 
-| Síntoma                                     | Causa probable y solución                                                                                                       |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Error de validación de variables al iniciar | Algún valor de `.env.local` no cumple el esquema (por ejemplo, una URL mal formada). Revisa la tabla de variables.              |
-| `POST /api/revalidate` responde `401`       | `REVALIDATE_SECRET` no está definido o la cabecera `x-revalidate-secret` no coincide.                                           |
-| Playwright no encuentra el navegador        | Ejecuta `pnpm exec playwright install --with-deps chromium`.                                                                    |
-| El puerto 3000 está ocupado                 | Detén el proceso que lo usa o inicia con `pnpm dev -p 3001`.                                                                    |
-| `pnpm` no reconoce la versión               | Ejecuta `corepack enable` para usar la versión definida en `packageManager`.                                                    |
-| El catálogo muestra datos de respaldo       | FakeStore no está disponible. Ejecuta `pnpm fakestore`, define `FAKESTORE_API_URL=http://localhost:4010` y reinicia `pnpm dev`. |
+| Síntoma                                     | Causa probable y solución                                                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Error de validación de variables al iniciar | Algún valor de `.env.local` no cumple el esquema (por ejemplo, una URL mal formada). Revisa la tabla de variables. |
+| `POST /api/revalidate` responde `401`       | `REVALIDATE_SECRET` no está definido o la cabecera `x-revalidate-secret` no coincide.                              |
+| Playwright no encuentra el navegador        | Ejecuta `pnpm exec playwright install --with-deps chromium`.                                                       |
+| El puerto 3000 está ocupado                 | Detén el proceso que lo usa o inicia con `pnpm dev -p 3001`.                                                       |
+| `pnpm` no reconoce la versión               | Ejecuta `corepack enable` para usar la versión definida en `packageManager`.                                       |
+| El catálogo muestra datos de respaldo       | FakeStore no está disponible. Apunta `FAKESTORE_API_URL` al servicio compatible y reinicia `pnpm dev`.             |

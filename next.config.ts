@@ -11,7 +11,7 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://fakestoreapi.com",
+  "img-src 'self' data: blob: https://fakestoreapi.com https://raw.githubusercontent.com",
   "font-src 'self'",
   "connect-src 'self'",
   "frame-ancestors 'self'",
@@ -27,23 +27,17 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
-    ...(isDev ? { dangerouslyAllowLocalIP: true } : {}),
     remotePatterns: [
       {
         protocol: "https",
         hostname: "fakestoreapi.com",
         pathname: "/img/**",
       },
-      ...(isDev
-        ? [
-            {
-              protocol: "http" as const,
-              hostname: "localhost",
-              port: "4010",
-              pathname: "/img/**",
-            },
-          ]
-        : []),
+      {
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+        pathname: "/keikaavousi/fake-store-api/master/public/img/**",
+      },
     ],
   },
   async headers() {
