@@ -28,8 +28,10 @@ RUN addgroup -S nodejs && adduser -S nextjs -G nodejs
 COPY --from=build /app/public ./public
 COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=build --chown=nextjs:nodejs /app/node_modules/sharp ./node_modules/sharp
-COPY --from=build --chown=nextjs:nodejs /app/node_modules/@img ./node_modules/@img
+RUN --mount=type=bind,from=build,source=/app/node_modules,target=/src_nm \
+    mkdir -p node_modules && \
+    cp -a /src_nm/sharp node_modules/ && \
+    (test -d /src_nm/@img && cp -a /src_nm/@img node_modules/ || true)
 RUN mkdir -p .next/cache && chown -R nextjs:nodejs .next
 USER nextjs
 EXPOSE 3000
