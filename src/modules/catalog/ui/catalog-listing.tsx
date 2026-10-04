@@ -13,8 +13,10 @@ export function CatalogListing({
 }) {
   return (
     <CatalogPendingProvider>
-      <div className="mt-10 grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <Suspense fallback={<CategoryFilterFallback />}>{sidebar}</Suspense>
+      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="min-w-0">
+          <Suspense fallback={<CategoryFilterFallback />}>{sidebar}</Suspense>
+        </div>
         <div className="min-w-0">
           <Suspense fallback={<GridSkeleton />}>{children}</Suspense>
         </div>

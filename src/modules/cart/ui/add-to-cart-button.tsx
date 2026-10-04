@@ -11,6 +11,7 @@ export function AddToCartButton(product: CartDraft) {
 
   return (
     <Button
+      className="max-w-full px-3 text-xs whitespace-nowrap @[10.5rem]:px-5 @[10.5rem]:text-sm"
       onClick={() => {
         add({ ...product, qty: 1 });
         toast.success("Agregado al carrito", { description: product.title });
