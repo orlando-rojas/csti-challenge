@@ -1,0 +1,22 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.storybook
+    image: ghcr.io/orlando-rojas/csti-challenge-storybook:latest
+    restart: unless-stopped
+    expose:
+      - "80"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.csti-challenge-storybook-web.rule=Host(`csti-challenge-storybook.orlando-rojas.com`)
+      - traefik.http.routers.csti-challenge-storybook-web.entrypoints=web
+      - traefik.http.routers.csti-challenge-storybook-web.service=csti-challenge-storybook-web
+      - traefik.http.services.csti-challenge-storybook-web.loadbalancer.server.port=80
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true

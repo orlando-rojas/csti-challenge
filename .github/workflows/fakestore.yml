@@ -2,7 +2,7 @@ name: FakeStore
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - "services/fakestore/**"
       - "src/modules/catalog/infrastructure/fixtures/**"

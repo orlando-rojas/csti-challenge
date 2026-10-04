@@ -295,7 +295,7 @@ Para cambiar la URL canónica, pásala como argumento de build, ya que se incrus
 docker build --build-arg NEXT_PUBLIC_SITE_URL=http://localhost:3000 -t csti-challenge .
 ```
 
-El resto de las variables se pasan en tiempo de ejecución con `-e` o `--env-file .env.local`. Entre ellas, `FAKESTORE_API_URL` es el único ajuste para apuntar a otro catálogo. La imagen se ejecuta con un usuario sin privilegios, expone el puerto `3000` e incluye un `HEALTHCHECK` sobre `/api/health`. Para conservar la caché entre despliegues, monta un volumen en `/app/.next/cache`.
+El resto de las variables se pasan en tiempo de ejecución con `-e` o `--env-file .env.local`. Entre ellas, `FAKESTORE_API_URL` es el único ajuste para apuntar a otro catálogo. La imagen se ejecuta con un usuario sin privilegios, expone el puerto `3000` e incluye un `HEALTHCHECK` sobre `/api/health`. Para conservar la caché entre despliegues, monta un volumen en `/app/.next/cache`. En Dokploy usa [`docker-compose.yml`](docker-compose.yml).
 
 ### Sustituto de FakeStore
 
@@ -307,6 +307,8 @@ docker run --rm -p 4010:4010 csti-challenge-fakestore
 Dokploy lo despliega con [`docker-compose.fakestore.yml`](docker-compose.fakestore.yml). El dominio es `csti-challenge-fakestore.orlando-rojas.com` y el healthcheck usa `GET /health`.
 
 ### Storybook
+
+Dokploy lo despliega con [`docker-compose.storybook.yml`](docker-compose.storybook.yml) en `https://csti-challenge-storybook.orlando-rojas.com`.
 
 ```bash
 docker build -f Dockerfile.storybook -t csti-challenge-storybook .
@@ -332,13 +334,21 @@ curl -X POST http://localhost:3000/api/revalidate \
 
 ## Integración y despliegue continuo
 
-| Workflow        | Disparador                              | Responsabilidad                                                                                 |
-| --------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `ci.yml`        | PR y push a `main`                      | Job `verify`: typecheck, lint, pruebas unitarias y build.                                       |
-| `release.yml`   | Push a `main`                           | Construye la imagen, ejecuta E2E y Lighthouse, publica en GHCR y despliega en Dokploy y Vercel. |
-| `contract.yml`  | Diario y manual                         | Pruebas de contrato contra FakeStore; abre un issue si fallan.                                  |
-| `storybook.yml` | Push a `main` con cambios de UI         | Build y publicación de Storybook.                                                               |
-| `fakestore.yml` | Push a `main` con cambios del sustituto | Publica `ghcr.io/orlando-rojas/csti-challenge-fakestore` y redespliega en Dokploy.              |
+| Workflow        | Disparador                                | Responsabilidad                                                                                 |
+| --------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `ci.yml`        | PR y push a `master`                      | Job `verify`: typecheck, lint, pruebas unitarias y build.                                       |
+| `release.yml`   | Push a `master`                           | Construye la imagen, ejecuta E2E y Lighthouse, publica en GHCR y despliega en Dokploy y Vercel. |
+| `contract.yml`  | Diario y manual                           | Pruebas de contrato contra FakeStore; abre un issue si fallan.                                  |
+| `storybook.yml` | Push a `master` con cambios de UI         | Build y publicación de Storybook.                                                               |
+| `fakestore.yml` | Push a `master` con cambios del sustituto | Publica `ghcr.io/orlando-rojas/csti-challenge-fakestore` y redespliega en Dokploy.              |
+
+**Dokploy (proyecto `orlando-rojas`):** tres servicios Compose en el CT de Dokploy, cada uno con su `docker-compose*.yml` y labels Traefik hacia Cloudflare Tunnel:
+
+| Servicio  | Compose                        | Dominio                                      | Secret GitHub (webhook)         |
+| --------- | ------------------------------ | -------------------------------------------- | ------------------------------- |
+| Tienda    | `docker-compose.yml`           | `csti-challenge.orlando-rojas.com`           | `DOKPLOY_WEBHOOK_URL`           |
+| Storybook | `docker-compose.storybook.yml` | `csti-challenge-storybook.orlando-rojas.com` | `DOKPLOY_STORYBOOK_WEBHOOK_URL` |
+| FakeStore | `docker-compose.fakestore.yml` | `csti-challenge-fakestore.orlando-rojas.com` | `DOKPLOY_FAKESTORE_WEBHOOK_URL` |
 
 **Flujo de release:** la imagen se publica como `ghcr.io/orlando-rojas/csti-challenge:<sha>` y `:latest`. Si los secretos están configurados, el workflow llama al webhook de Dokploy, ejecuta un smoke test sobre el dominio principal y publica el espejo con `vercel deploy --prebuilt --prod`.
 
