@@ -1,22 +1,11 @@
-import {
-  createReadStream,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  statSync,
-} from "node:fs";
-import { writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { pipeToResponse } from "./pipe.mjs";
-
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../..");
-const imgDir = join(here, "img");
-const port = Number(process.env.FAKESTORE_PORT ?? 4010);
-const origin = `http://localhost:${port}`;
+const port = Number(process.env.PORT ?? process.env.FAKESTORE_PORT ?? 4010);
 const imageSource =
   "https://raw.githubusercontent.com/keikaavousi/fake-store-api/master/public/img";
 
@@ -42,28 +31,8 @@ function present(product) {
   const file = imageFile(product.image);
   return {
     ...product,
-    image: `${origin}/img/${encodeURIComponent(file)}`,
+    image: `${imageSource}/${encodeURI(file)}`,
   };
-}
-
-async function ensureImages() {
-  mkdirSync(imgDir, { recursive: true });
-  const files = [
-    ...new Set(products.map((product) => imageFile(product.image))),
-  ];
-
-  await Promise.all(
-    files.map(async (file) => {
-      const dest = join(imgDir, file);
-      if (existsSync(dest) && statSync(dest).size > 0) return;
-
-      const response = await fetch(`${imageSource}/${encodeURI(file)}`);
-      if (!response.ok) {
-        throw new Error(`Could not download ${file}: ${response.status}`);
-      }
-      await writeFile(dest, Buffer.from(await response.arrayBuffer()));
-    }),
-  );
 }
 
 function sendJson(response, status, body) {
@@ -83,14 +52,6 @@ function listProducts(url) {
   return list;
 }
 
-function safeImageName(encoded) {
-  const file = decodeURIComponent(encoded);
-  if (file.includes("..") || file.includes("/") || file.includes("\\")) {
-    return null;
-  }
-  return file;
-}
-
 const server = createServer((request, response) => {
   if (request.method !== "GET" || !request.url) {
     response.writeHead(405);
@@ -98,7 +59,12 @@ const server = createServer((request, response) => {
     return;
   }
 
-  const url = new URL(request.url, origin);
+  const url = new URL(request.url, "http://127.0.0.1");
+
+  if (url.pathname === "/health") {
+    sendJson(response, 200, { status: "ok" });
+    return;
+  }
 
   if (url.pathname === "/products") {
     sendJson(response, 200, listProducts(url));
@@ -134,27 +100,9 @@ const server = createServer((request, response) => {
     return;
   }
 
-  const imageMatch = url.pathname.match(/^\/img\/([^/]+)$/);
-  if (imageMatch) {
-    const file = safeImageName(imageMatch[1]);
-    const path = file ? join(imgDir, file) : "";
-    if (!file || !existsSync(path)) {
-      response.writeHead(404);
-      response.end();
-      return;
-    }
-    response.writeHead(200, {
-      "content-type": "image/jpeg",
-      "cache-control": "public, max-age=86400",
-    });
-    pipeToResponse(createReadStream(path), response);
-    return;
-  }
-
   sendJson(response, 404, { message: "Not found" });
 });
 
-await ensureImages();
-server.listen(port, "localhost", () => {
-  console.log(`Fake Store stand-in listening on ${origin}`);
+server.listen(port, "0.0.0.0", () => {
+  console.log(`Fake Store stand-in listening on http://0.0.0.0:${port}`);
 });
