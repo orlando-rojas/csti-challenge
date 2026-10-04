@@ -1,5 +1,5 @@
 FROM node:26-alpine AS base
-RUN corepack enable && corepack prepare pnpm@10.15.1 --activate
+RUN npm install -g corepack@0.31.0 && corepack enable && corepack prepare pnpm@10.15.1 --activate
 WORKDIR /app
 
 FROM base AS deps
