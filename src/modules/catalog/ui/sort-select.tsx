@@ -9,6 +9,8 @@ import {
 } from "@/modules/catalog/application/catalog-params";
 import { sortKeys, sortLabels } from "@/modules/catalog/application/sort";
 import { useCatalogSortTransition } from "@/modules/catalog/ui/catalog-pending";
+import { cn } from "@/shared/lib/utils";
+import { fieldClass } from "@/shared/ui/field";
 
 export function SortSelect() {
   const startTransition = useCatalogSortTransition();
@@ -39,7 +41,7 @@ export function SortSelect() {
             page: null,
           });
         }}
-        className="h-11 appearance-none rounded-full border border-line bg-surface pr-11 pl-4 text-sm"
+        className={cn(fieldClass, "appearance-none pr-11 pl-4")}
       >
         {sortKeys.map((key) => (
           <option key={key} value={key}>

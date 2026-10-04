@@ -59,7 +59,10 @@ export {
   catalogListingPath,
   catalogSearchParamsCache,
 } from "@/modules/catalog/application/catalog-params.server";
-export { CatalogListing } from "@/modules/catalog/ui/catalog-listing";
+export {
+  CatalogListing,
+  CatalogListingFallback,
+} from "@/modules/catalog/ui/catalog-listing";
 export {
   CatalogEntryLink,
   CatalogHeaderLink,

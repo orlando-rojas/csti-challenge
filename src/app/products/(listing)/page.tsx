@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
   catalogListingPath,
   catalogSearchParamsCache,
   CatalogListing,
+  CatalogListingFallback,
   CatalogPagination,
   CatalogResultsFrame,
   CategoryFilter,
@@ -22,6 +24,8 @@ import {
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
+import { Container } from "@/shared/ui/container";
+import { Eyebrow } from "@/shared/ui/eyebrow";
 
 export const prefetch = "partial";
 
@@ -56,21 +60,19 @@ export default function ProductsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <Container className="py-10">
       <header className="max-w-2xl">
-        <p className="text-xs tracking-[0.16em] text-muted uppercase">
-          Catálogo
-        </p>
+        <Eyebrow>Catálogo</Eyebrow>
         <h1 className="mt-2 font-display text-5xl">Todo el inventario</h1>
       </header>
-      <CatalogListing sidebar={<CategorySidebar searchParams={searchParams} />}>
-        <CatalogResults searchParams={searchParams} />
-      </CatalogListing>
-    </div>
+      <Suspense fallback={<CatalogListingFallback />}>
+        <CatalogContent searchParams={searchParams} />
+      </Suspense>
+    </Container>
   );
 }
 
-async function CategorySidebar({
+async function CatalogContent({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -79,20 +81,12 @@ async function CategorySidebar({
     catalogSearchParamsCache.parse(searchParams),
     listCategories(),
   ]);
-
-  return <CategoryFilter categories={categories} query={query} />;
-}
-
-async function CatalogResults({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const query = await catalogSearchParamsCache.parse(searchParams);
   const catalog = await getCatalog(query);
 
   return (
-    <>
+    <CatalogListing
+      sidebar={<CategoryFilter categories={categories} query={query} />}
+    >
       <JsonLd
         data={itemListStructuredData(catalog.items, (id) =>
           productCanonical(id),
@@ -136,7 +130,7 @@ async function CatalogResults({
           pageCount={catalog.pageCount}
         />
       </CatalogResultsFrame>
-    </>
+    </CatalogListing>
   );
 }
 

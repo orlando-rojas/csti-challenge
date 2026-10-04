@@ -6,7 +6,8 @@ import {
   CategoryView,
   ForgetPendingCategory,
 } from "@/modules/catalog/ui/category-view";
-import { cn } from "@/shared/lib/utils";
+import { Eyebrow } from "@/shared/ui/eyebrow";
+import { pillClass } from "@/shared/ui/pill";
 
 export function CategoryNav({
   categories,
@@ -19,9 +20,7 @@ export function CategoryNav({
 
   return (
     <nav aria-label="Categorías">
-      <p className="mb-3 text-xs font-medium tracking-[0.16em] text-muted uppercase">
-        Categorías
-      </p>
+      <Eyebrow className="mb-3 font-medium">Categorías</Eyebrow>
       <ul className="flex min-w-0 gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
         {items.map((category) => {
           const current = query.category === category;
@@ -38,12 +37,7 @@ export function CategoryNav({
                   href={href}
                   current={current}
                   category={category}
-                  className={cn(
-                    "inline-flex cursor-pointer rounded-full border px-4 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out active:scale-[0.98]",
-                    current
-                      ? "border-ink bg-ink text-paper"
-                      : "border-line bg-surface hover:border-ink",
-                  )}
+                  className={pillClass({ selected: current })}
                 >
                   {category ? categoryLabel(category) : "Todas"}
                 </CategoryLink>

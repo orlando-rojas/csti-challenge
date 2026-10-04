@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/shared/ui/button";
+import { StatusMessage } from "@/shared/ui/status-message";
 
 export default function ProductsError({
   reset,
@@ -9,14 +10,11 @@ export default function ProductsError({
   reset: () => void;
 }) {
   return (
-    <div className="mx-auto max-w-lg px-4 py-20 text-center">
-      <h1 className="font-display text-4xl">No pudimos cargar el catálogo</h1>
-      <p className="mt-3 text-muted">
-        La tienda sigue en pie. Puedes intentar de nuevo.
-      </p>
-      <Button className="mt-6" onClick={reset}>
-        Reintentar
-      </Button>
-    </div>
+    <StatusMessage
+      title="No pudimos cargar el catálogo"
+      description="La tienda sigue en pie. Puedes intentar de nuevo."
+      titleClassName="text-4xl"
+      action={<Button onClick={reset}>Reintentar</Button>}
+    />
   );
 }

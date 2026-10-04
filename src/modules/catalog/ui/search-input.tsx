@@ -4,6 +4,8 @@ import { debounce, useQueryStates } from "nuqs";
 
 import { catalogSearchParsers } from "@/modules/catalog/application/catalog-params";
 import { useCatalogSearchTransition } from "@/modules/catalog/ui/catalog-pending";
+import { cn } from "@/shared/lib/utils";
+import { fieldClass } from "@/shared/ui/field";
 
 export function SearchInput() {
   const { pending, startTransition } = useCatalogSearchTransition();
@@ -36,7 +38,7 @@ export function SearchInput() {
             page: null,
           });
         }}
-        className="h-11 w-full rounded-full border border-line bg-surface px-4 text-sm outline-none placeholder:text-muted"
+        className={cn(fieldClass, "w-full px-4 placeholder:text-muted")}
       />
     </div>
   );

@@ -7,8 +7,16 @@ import { ViewTransition } from "react";
 
 import { categoryLabel } from "@/modules/catalog/domain/category";
 import type { Product } from "@/modules/catalog/domain/product";
+import {
+  productImageShare,
+  productTitleShare,
+} from "@/modules/catalog/ui/product-transition";
 import { formatMoney } from "@/shared/lib/format";
+import { cn } from "@/shared/lib/utils";
+import { buttonVariants } from "@/shared/ui/button";
 import { ClampedText } from "@/shared/ui/clamped-text";
+import { eyebrowClass } from "@/shared/ui/eyebrow";
+import { ImageFrame } from "@/shared/ui/image-frame";
 import { ProductImage } from "@/shared/ui/product-image";
 
 function titleInView(title: HTMLElement) {
@@ -20,9 +28,6 @@ function titleInView(title: HTMLElement) {
     rect.left < window.innerWidth
   );
 }
-
-const imageShare = { "nav-forward": "auto", default: "none" } as const;
-const titleShare = { "nav-forward": "product-title", default: "none" } as const;
 
 function resetShiftAfterSnapshot(undo: () => void) {
   const start = document.startViewTransition?.bind(document);
@@ -129,9 +134,9 @@ export function ProductCard({
           enter="none"
           exit="none"
           default="none"
-          share={imageShare}
+          share={productImageShare}
         >
-          <div className="image-stage relative aspect-square overflow-hidden rounded-3xl">
+          <ImageFrame className="aspect-square rounded-3xl">
             <ProductImage
               src={product.image}
               alt={product.title}
@@ -139,18 +144,15 @@ export function ProductCard({
               className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.03]"
               preload={priority}
             />
-          </div>
+          </ImageFrame>
         </ViewTransition>
-        <ClampedText
-          lines={1}
-          className="mt-4 text-xs tracking-[0.14em] text-muted uppercase"
-        >
+        <ClampedText lines={1} className={cn(eyebrowClass, "mt-4")}>
           {categoryLabel(product.category)}
         </ClampedText>
         {transitionTitle ? (
           <ViewTransition
             name={`product-title-${product.id}`}
-            share={titleShare}
+            share={productTitleShare}
             enter="none"
             exit="none"
             default="none"
@@ -167,7 +169,10 @@ export function ProductCard({
         scroll={false}
         data-testid="product-preview"
         aria-label={`Vista previa de ${product.title}`}
-        className="absolute top-3 right-3 z-10 inline-flex size-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-[color,background-color,border-color,transform] duration-200 ease-out hover:border-ink active:scale-[0.98]"
+        className={cn(
+          buttonVariants({ variant: "outline", size: "icon" }),
+          "absolute top-3 right-3 z-10 bg-paper",
+        )}
       >
         <Eye className="size-4" aria-hidden="true" />
       </Link>
