@@ -24,10 +24,6 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   reactCompiler: true,
   output: "standalone",
-  // Next's compressor gzips the document before the server rewrite runs, so
-  // browsers would measure the original script tags. Compression happens
-  // after that rewrite instead.
-  compress: false,
   experimental: {
     // One request instead of document → stylesheet. On the release runner
     // that second hop is what pushes simulated LCP just over 2.5s.

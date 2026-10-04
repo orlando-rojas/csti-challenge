@@ -1,10 +1,6 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
 
-  const { installDeferredDocumentScripts } =
-    await import("@/shared/lib/install-deferred-document-scripts");
-  installDeferredDocumentScripts();
-
   const { registerOTel } = await import("@vercel/otel");
   registerOTel({ serviceName: "csti-challenge" });
 
