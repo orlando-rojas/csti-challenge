@@ -1,5 +1,24 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function waitForHydration(page: Page) {
+  await page.locator("html[data-hydrated]").waitFor({ state: "attached" });
+}
+
+test.beforeEach(({ page }) => {
+  const goto = page.goto.bind(page);
+  const reload = page.reload.bind(page);
+  page.goto = async (url, options) => {
+    const response = await goto(url, options);
+    await waitForHydration(page);
+    return response;
+  };
+  page.reload = async (options) => {
+    const response = await reload(options);
+    await waitForHydration(page);
+    return response;
+  };
+});
 
 test("category filter stays in the url after reload", async ({ page }) => {
   await page.goto("/products");
