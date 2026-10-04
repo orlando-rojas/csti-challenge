@@ -3,14 +3,14 @@ import { expect, test } from "@playwright/test";
 
 test("category filter stays in the url after reload", async ({ page }) => {
   await page.goto("/products");
-  await page.getByRole("link", { name: "Electrónica" }).click();
+  const electronics = page
+    .getByRole("navigation", { name: "Categorías" })
+    .getByRole("link", { name: "Electrónica", exact: true });
+  await electronics.click();
   await expect(page).toHaveURL(/category=electronics/);
   await page.reload();
   await expect(page).toHaveURL(/category=electronics/);
-  await expect(page.getByRole("link", { name: "Electrónica" })).toHaveAttribute(
-    "aria-current",
-    "page",
-  );
+  await expect(electronics).toHaveAttribute("aria-current", "page");
 });
 
 test("catalog page stays in the url after reload", async ({ page }) => {
@@ -43,7 +43,11 @@ test("empty search shows a way back", async ({ page }) => {
 
 test("adding to the cart survives a reload", async ({ page }) => {
   await page.goto("/products/1");
-  await page.getByRole("button", { name: "Agregar al carrito" }).click();
+  await page
+    .getByRole("article")
+    .filter({ has: page.getByRole("heading", { level: 1 }) })
+    .getByRole("button", { name: "Agregar al carrito" })
+    .click();
   await expect(page.getByTestId("cart-badge")).toHaveText("1");
   await page.reload();
   await expect(page.getByTestId("cart-badge")).toHaveText("1");
@@ -69,7 +73,7 @@ test("preview opens over the catalog and the card opens the product page", async
   await expect(page).toHaveURL(/\/products\/\d+$/);
 
   await page.goto("/products");
-  await card.getByRole("heading", { level: 3 }).click();
+  await card.getByRole("heading", { level: 2 }).click();
   await expect(page.getByTestId("quick-view")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "Backpack",

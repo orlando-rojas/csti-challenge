@@ -68,8 +68,8 @@ function revealTitle(event: MouseEvent<HTMLAnchorElement>) {
     return;
   }
 
-  const title = event.currentTarget.querySelector("h3");
-  if (!title || titleInView(title)) return;
+  const title = event.currentTarget.querySelector("h2, h3");
+  if (!(title instanceof HTMLElement) || titleInView(title)) return;
   const rect = title.getBoundingClientRect();
   const card = title.closest("article");
   if (!card) return;
@@ -83,10 +83,16 @@ function revealTitle(event: MouseEvent<HTMLAnchorElement>) {
   });
 }
 
-function ProductTitle({ product }: { product: Product }) {
+function ProductTitle({
+  product,
+  level,
+}: {
+  product: Product;
+  level: "h2" | "h3";
+}) {
   return (
     <ClampedText
-      as="h3"
+      as={level}
       lines={2}
       className="mt-1 min-h-[2lh] text-base leading-snug"
     >
@@ -100,11 +106,13 @@ export function ProductCard({
   priority = false,
   action,
   transitionTitle = true,
+  titleLevel = "h2",
 }: {
   product: Product;
   priority?: boolean;
   action?: ReactNode;
   transitionTitle?: boolean;
+  titleLevel?: "h2" | "h3";
 }) {
   const detailHref = `/products/${product.id}`;
   const bindArticle = useCallback((article: HTMLElement | null) => {
@@ -157,10 +165,10 @@ export function ProductCard({
             exit="none"
             default="none"
           >
-            <ProductTitle product={product} />
+            <ProductTitle product={product} level={titleLevel} />
           </ViewTransition>
         ) : (
-          <ProductTitle product={product} />
+          <ProductTitle product={product} level={titleLevel} />
         )}
         <p className="mt-2 font-medium">{formatMoney(product.price.amount)}</p>
       </Link>

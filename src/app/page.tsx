@@ -105,6 +105,7 @@ async function FeaturedGrid() {
     <ProductGrid
       products={rest}
       columns={4}
+      titleLevel="h3"
       renderAction={(product) => <ProductCartAction product={product} />}
     />
   );

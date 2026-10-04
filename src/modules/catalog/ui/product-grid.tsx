@@ -15,12 +15,14 @@ export function ProductGrid({
   columns = 3,
   renderAction,
   transitionTitle = true,
+  titleLevel = "h2",
 }: {
   products: Product[];
   priorityCount?: number;
   columns?: keyof typeof columnClass;
   renderAction?: (product: Product) => ReactNode;
   transitionTitle?: boolean;
+  titleLevel?: "h2" | "h3";
 }) {
   return (
     <ul
@@ -37,6 +39,7 @@ export function ProductGrid({
               product={product}
               priority={index < priorityCount}
               transitionTitle={transitionTitle}
+              titleLevel={titleLevel}
               {...(action ? { action } : {})}
             />
           </li>
