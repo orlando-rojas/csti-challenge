@@ -74,6 +74,7 @@ export { SearchInput } from "@/modules/catalog/ui/search-input";
 export { SortSelect } from "@/modules/catalog/ui/sort-select";
 export { ProductCard } from "@/modules/catalog/ui/product-card";
 export { ProductGrid } from "@/modules/catalog/ui/product-grid";
+export { DeferredProductGrid } from "@/modules/catalog/ui/deferred-product-grid";
 export { JsonLd } from "@/modules/catalog/ui/json-ld";
 export {
   breadcrumbStructuredData,

@@ -16,9 +16,11 @@ import { ProductImage } from "@/shared/ui/product-image";
 export function ProductDetail({
   product,
   action,
+  imageSrc,
 }: {
   product: Product;
   action: ReactNode;
+  imageSrc?: string;
 }) {
   return (
     <article className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
@@ -30,13 +32,26 @@ export function ProductDetail({
         default="none"
       >
         <ImageFrame className="aspect-square rounded-[2rem]">
-          <ProductImage
-            src={product.image}
-            alt={product.title}
-            preload
-            sizes="(max-width: 1024px) 100vw, 560px"
-            className="object-contain p-10"
-          />
+          {imageSrc ? (
+            // The detail photo is inlined so it can paint before the framework script.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageSrc}
+              alt={product.title}
+              sizes="(max-width: 1024px) 100vw, 560px"
+              fetchPriority="high"
+              decoding="auto"
+              className="absolute inset-0 h-full w-full object-contain p-10"
+            />
+          ) : (
+            <ProductImage
+              src={product.image}
+              alt={product.title}
+              preload
+              sizes="(max-width: 1024px) 100vw, 560px"
+              className="object-contain p-10"
+            />
+          )}
         </ImageFrame>
       </ViewTransition>
       <div>

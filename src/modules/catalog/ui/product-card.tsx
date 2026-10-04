@@ -107,12 +107,14 @@ export function ProductCard({
   action,
   transitionTitle = true,
   titleLevel = "h2",
+  image,
 }: {
   product: Product;
   priority?: boolean;
   action?: ReactNode;
   transitionTitle?: boolean;
   titleLevel?: "h2" | "h3";
+  image?: ReactNode;
 }) {
   const detailHref = `/products/${product.id}`;
   const bindArticle = useCallback((article: HTMLElement | null) => {
@@ -145,13 +147,15 @@ export function ProductCard({
           share={productImageShare}
         >
           <ImageFrame className="aspect-square rounded-3xl">
-            <ProductImage
-              src={product.image}
-              alt={product.title}
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.03]"
-              preload={priority}
-            />
+            {image ?? (
+              <ProductImage
+                src={product.image}
+                alt={product.title}
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.03]"
+                preload={priority}
+              />
+            )}
           </ImageFrame>
         </ViewTransition>
         <ClampedText lines={1} className={cn(eyebrowClass, "mt-4")}>
