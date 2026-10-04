@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { AddToCartButton } from "@/modules/cart";
 import {
   catalogListingPath,
   catalogSearchParamsCache,
   CatalogListing,
+  CatalogListingFallback,
   CatalogPagination,
   CatalogResultsFrame,
   CategoryFilter,
@@ -63,14 +65,14 @@ export default function ProductsPage({
         <Eyebrow>Catálogo</Eyebrow>
         <h1 className="mt-2 font-display text-5xl">Todo el inventario</h1>
       </header>
-      <CatalogListing sidebar={<CategorySidebar searchParams={searchParams} />}>
-        <CatalogResults searchParams={searchParams} />
-      </CatalogListing>
+      <Suspense fallback={<CatalogListingFallback />}>
+        <CatalogContent searchParams={searchParams} />
+      </Suspense>
     </Container>
   );
 }
 
-async function CategorySidebar({
+async function CatalogContent({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -79,20 +81,12 @@ async function CategorySidebar({
     catalogSearchParamsCache.parse(searchParams),
     listCategories(),
   ]);
-
-  return <CategoryFilter categories={categories} query={query} />;
-}
-
-async function CatalogResults({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const query = await catalogSearchParamsCache.parse(searchParams);
   const catalog = await getCatalog(query);
 
   return (
-    <>
+    <CatalogListing
+      sidebar={<CategoryFilter categories={categories} query={query} />}
+    >
       <JsonLd
         data={itemListStructuredData(catalog.items, (id) =>
           productCanonical(id),
@@ -136,7 +130,7 @@ async function CatalogResults({
           pageCount={catalog.pageCount}
         />
       </CatalogResultsFrame>
-    </>
+    </CatalogListing>
   );
 }
 

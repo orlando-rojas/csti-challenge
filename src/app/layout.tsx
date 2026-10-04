@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Fraunces, Outfit } from "next/font/google";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
@@ -57,25 +56,23 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col antialiased">
+        <a className="skip-link" href="#contenido">
+          Saltar al contenido
+        </a>
         <ThemeProvider>
-          <NuqsAdapter>
-            <a className="skip-link" href="#contenido">
-              Saltar al contenido
-            </a>
-            <SiteHeader cart={<CartMenu />} catalog={<CatalogHeaderLink />} />
-            <main id="contenido" className="flex-1">
-              {children}
-              {modal}
-            </main>
-            <SiteFooter />
-            <Toaster
-              position="bottom-center"
-              closeButton
-              toastOptions={{ closeButtonAriaLabel: "Cerrar" }}
-            />
-            <WebVitals />
-          </NuqsAdapter>
+          <SiteHeader cart={<CartMenu />} catalog={<CatalogHeaderLink />} />
+          <Toaster
+            position="bottom-center"
+            closeButton
+            toastOptions={{ closeButtonAriaLabel: "Cerrar" }}
+          />
         </ThemeProvider>
+        <main id="contenido" className="flex-1">
+          {children}
+          {modal}
+        </main>
+        <SiteFooter />
+        <WebVitals />
       </body>
     </html>
   );

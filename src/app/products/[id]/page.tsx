@@ -13,6 +13,7 @@ import {
   JsonLd,
   ProductDetail,
   ProductGrid,
+  ProductSkeleton,
   productStructuredData,
   type Product,
 } from "@/modules/catalog";
@@ -51,11 +52,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
+export default function ProductPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  return (
+    <Container className="py-10">
+      <Suspense fallback={<ProductSkeleton />}>
+        <ProductContent params={params} />
+      </Suspense>
+    </Container>
+  );
+}
+
+async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const product = await getKnownProduct(id);
   if (!product) notFound();
@@ -63,7 +74,7 @@ export default async function ProductPage({
   const canonical = productCanonical(product.id);
 
   return (
-    <Container className="py-10">
+    <>
       <JsonLd data={productStructuredData(product, canonical)} />
       <JsonLd
         data={breadcrumbStructuredData([
@@ -95,7 +106,7 @@ export default async function ProductPage({
           <RelatedProducts product={product} />
         </Suspense>
       </section>
-    </Container>
+    </>
   );
 }
 
