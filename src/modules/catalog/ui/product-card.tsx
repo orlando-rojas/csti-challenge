@@ -19,6 +19,12 @@ import { eyebrowClass } from "@/shared/ui/eyebrow";
 import { ImageFrame } from "@/shared/ui/image-frame";
 import { ProductImage } from "@/shared/ui/product-image";
 
+// The frame is square, then `p-6` and `object-contain` shrink the painted
+// photo again. These slots stay near that painted size so a phone does not
+// download a 384px file for a thumbnail.
+const gridImageSizes =
+  "(max-width: 767px) 26vw, (max-width: 1023px) 18vw, 180px";
+
 function titleInView(title: HTMLElement) {
   const rect = title.getBoundingClientRect();
   return (
@@ -107,12 +113,14 @@ export function ProductCard({
   action,
   transitionTitle = true,
   titleLevel = "h2",
+  sizes = gridImageSizes,
 }: {
   product: Product;
   priority?: boolean;
   action?: ReactNode;
   transitionTitle?: boolean;
   titleLevel?: "h2" | "h3";
+  sizes?: string;
 }) {
   const detailHref = `/products/${product.id}`;
   const bindArticle = useCallback((article: HTMLElement | null) => {
@@ -148,7 +156,7 @@ export function ProductCard({
             <ProductImage
               src={product.image}
               alt={product.title}
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              sizes={sizes}
               className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.03]"
               preload={priority}
             />

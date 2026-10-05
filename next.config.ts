@@ -23,15 +23,16 @@ const contentSecurityPolicy = [
 const nextConfig: NextConfig = {
   cacheComponents: true,
   reactCompiler: true,
-  output: "standalone",
-  poweredByHeader: false,
   experimental: {
-    // The stylesheet is the only request that delays first paint on localhost,
-    // which pulls every script into Lighthouse's simulated LCP.
+    // Tailwind stays small enough to ship with the document. A separate
+    // stylesheet is render-blocking and delays first paint.
     inlineCss: true,
   },
+  output: "standalone",
+  poweredByHeader: false,
   images: {
-    formats: ["image/webp"],
+    formats: ["image/avif", "image/webp"],
+    imageSizes: [32, 48, 64, 96, 128, 160, 192, 256, 320, 384],
     remotePatterns: [
       {
         protocol: "https",
