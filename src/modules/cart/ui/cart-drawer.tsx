@@ -15,11 +15,6 @@ import { Eyebrow } from "@/shared/ui/eyebrow";
 import { ImageFrame } from "@/shared/ui/image-frame";
 import { ProductImage } from "@/shared/ui/product-image";
 
-function lineImage(image: string, productId: number): string {
-  if (image.startsWith("/")) return image;
-  return `/catalog/${productId}.jpg`;
-}
-
 export function CartDrawer({
   open,
   onOpenChange,
@@ -126,7 +121,7 @@ export function CartDrawer({
                 >
                   <ImageFrame className="size-24 shrink-0 rounded-3xl">
                     <ProductImage
-                      src={lineImage(line.image, line.productId)}
+                      src={line.image}
                       alt=""
                       sizes="96px"
                       className="object-contain p-3"
