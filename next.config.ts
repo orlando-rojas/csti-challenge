@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   images: {
-    formats: ["image/avif", "image/webp"],
+    formats: ["image/webp"],
     imageSizes: [32, 48, 64, 96, 128, 160, 192, 256, 320, 384],
     remotePatterns: [
       {
