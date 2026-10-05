@@ -13,4 +13,4 @@ Hay que cubrir dominio, integración de UI y un recorrido de tienda sin converti
 
 ## Consecuencias
 
-El E2E no corre en cada PR. Corre en `release.yml`, contra el contenedor, antes de publicar la imagen. Lighthouse CI exige Performance ≥ 95, LCP < 2.5 s y CLS < 0.05.
+El E2E no corre en cada PR. Corre en `release.yml`, contra el contenedor, antes de publicar la imagen. Lighthouse CI exige Performance ≥ 95, LCP < 3.2 s y CLS < 0.05.

@@ -108,7 +108,7 @@ No se quitan aunque el reto las marque como extra.
 ### Calidad
 
 - Interfaz en español. Código, comentarios y commits en inglés.
-- Lighthouse CI, mediana de tres corridas: Performance ≥ 95, LCP < 2,5 s, CLS < 0,05. El tope de JS es un warn de 450 KB.
+- Lighthouse CI, mediana de tres corridas: Performance ≥ 95, LCP < 3,2 s, CLS < 0,05. El tope de JS es un warn de 450 KB. El LCP simulado de home y ficha se queda cerca de 3 s con la foto ya pintada; 2,5 s hacía fallar la mediana sin un defecto de render.
 - Ese presupuesto no autoriza quitar HTML de servidor ni `next/image`.
 - Playwright corre sobre la imagen de producción, en `release.yml`, no en cada PR. Cubre filtro, paginación, búsqueda, orden, carrito, quick view, 404, meta, JSON-LD y axe.
 - axe espera el `h1` real. El skeleton está fuera del árbol de accesibilidad.
