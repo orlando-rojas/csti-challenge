@@ -20,22 +20,40 @@ function EmptyPanel({
   );
 }
 
-export function EmptyState() {
+export function EmptyState({
+  title = "Nada coincide",
+  description = "Prueba con otra palabra o quita los filtros.",
+  actionLabel = "Limpiar filtros",
+}: {
+  title?: string;
+  description?: string;
+  actionLabel?: string;
+}) {
   return (
     <EmptyPanel
-      title="Nada coincide"
-      description="Prueba con otra palabra o quita los filtros."
-      action={<ButtonLink href="/products">Limpiar filtros</ButtonLink>}
+      title={title}
+      description={description}
+      action={<ButtonLink href="/products">{actionLabel}</ButtonLink>}
     />
   );
 }
 
-export function EmptyPage({ href }: { href: string }) {
+export function EmptyPage({
+  href,
+  title = "Esta página está vacía",
+  description = "El listado no llega hasta aquí.",
+  actionLabel = "Volver a la primera",
+}: {
+  href: string;
+  title?: string;
+  description?: string;
+  actionLabel?: string;
+}) {
   return (
     <EmptyPanel
-      title="Esta página está vacía"
-      description="El listado no llega hasta aquí."
-      action={<ButtonLink href={href}>Volver a la primera</ButtonLink>}
+      title={title}
+      description={description}
+      action={<ButtonLink href={href}>{actionLabel}</ButtonLink>}
     />
   );
 }
