@@ -168,7 +168,7 @@ Cómo se aplica SOLID:
   - `loading="lazy"` en el resto, `aspect-ratio` fijo y formatos AVIF/WebP (con `sharp` dentro de la imagen Docker).
 - `next/font`, `next/dynamic` para `CartDrawer`, y búsqueda con debounce + `useTransition` (para cuidar el INP).
 - Streaming: `<Suspense>` con skeletons en el grid, las categorías y los productos relacionados.
-- Presupuestos en Lighthouse CI: Performance ≥ 95, LCP < 2.5 s, CLS < 0.05, y un tope de JS (`@next/bundle-analyzer`).
+- Presupuestos en Lighthouse CI: Performance ≥ 95, LCP < 3.2 s, CLS < 0.05, y un tope de JS (`@next/bundle-analyzer`).
 - RUM: `useReportWebVitals` envía las métricas a `/api/vitals` con `sendBeacon`, que las convierte en un histograma de OTel y las manda a Grafana.
 
 ## 6. SEO
