@@ -7,7 +7,11 @@ import { useCatalogSearchTransition } from "@/modules/catalog/ui/catalog-pending
 import { cn } from "@/shared/lib/utils";
 import { fieldClass } from "@/shared/ui/field";
 
-export function SearchInput() {
+export function SearchInput({
+  placeholder = "Buscar productos",
+}: {
+  placeholder?: string;
+}) {
   const { pending, startTransition } = useCatalogSearchTransition();
   const [{ q }, setQuery] = useQueryStates(
     {
@@ -29,7 +33,7 @@ export function SearchInput() {
       <input
         id="catalog-search"
         value={q}
-        placeholder="Buscar productos"
+        placeholder={placeholder}
         aria-busy={pending}
         onChange={(event) => {
           const value = event.target.value;

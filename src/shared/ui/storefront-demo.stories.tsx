@@ -18,54 +18,64 @@ import { SiteHeader } from "@/shared/ui/site-header";
 
 function StorefrontDemo() {
   return (
-    <NuqsAdapter>
-      <CatalogPendingProvider>
-        <SiteHeader cart={<CartMenu />} catalog={<CatalogHeaderLink />} />
-        <Container className="py-10">
-          <Eyebrow>Demostración</Eyebrow>
-          <h1 className="mt-2 max-w-xl font-display text-5xl">
-            Componentes de la tienda
-          </h1>
-          <p className="mt-4 max-w-lg text-muted">
-            Encabezado, búsqueda, orden, tarjetas y carrito. Son los mismos
-            componentes que renderiza la aplicación.
-          </p>
-          <div className="mt-8 mb-8 flex flex-col gap-3 sm:flex-row">
-            <SearchInput />
-            <SortSelect />
-          </div>
-          <ProductGrid
-            products={[...demoProducts]}
-            columns={4}
-            transitionTitle={false}
-            renderAction={(product) => (
-              <AddToCartButton
-                productId={product.id}
-                title={product.title}
-                image={product.image}
-                unitPrice={product.price.amount}
-              />
-            )}
+    <div className="min-w-0 max-w-full overflow-x-clip">
+      <NuqsAdapter>
+        <CatalogPendingProvider>
+          <SiteHeader cart={<CartMenu />} catalog={<CatalogHeaderLink />} />
+          <Container className="py-10">
+            <Eyebrow>Demostración</Eyebrow>
+            <h1 className="mt-2 max-w-xl font-display text-5xl">
+              Componentes de la tienda
+            </h1>
+            <p className="mt-4 max-w-lg text-muted">
+              Encabezado, búsqueda, orden, tarjetas y carrito. Son los mismos
+              componentes que renderiza la aplicación.
+            </p>
+            <div className="mt-8 mb-8 flex flex-col gap-3 sm:flex-row">
+              <SearchInput />
+              <SortSelect />
+            </div>
+            <ProductGrid
+              products={[...demoProducts]}
+              columns={4}
+              transitionTitle={false}
+              renderAction={(product) => (
+                <AddToCartButton
+                  productId={product.id}
+                  title={product.title}
+                  image={product.image}
+                  unitPrice={product.price.amount}
+                />
+              )}
+            />
+            <div className="mt-16">
+              <EmptyState />
+            </div>
+          </Container>
+          <SiteFooter />
+          <Toaster
+            position="bottom-center"
+            closeButton
+            toastOptions={{ closeButtonAriaLabel: "Cerrar" }}
           />
-          <div className="mt-16">
-            <EmptyState />
-          </div>
-        </Container>
-        <SiteFooter />
-        <Toaster
-          position="bottom-center"
-          closeButton
-          toastOptions={{ closeButtonAriaLabel: "Cerrar" }}
-        />
-      </CatalogPendingProvider>
-    </NuqsAdapter>
+        </CatalogPendingProvider>
+      </NuqsAdapter>
+    </div>
   );
 }
 
 const meta = {
   title: "Demo/Storefront",
   component: StorefrontDemo,
-  parameters: { layout: "fullscreen", themeMode: "live" },
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    themeMode: "live",
+    controls: { disable: true },
+    docs: {
+      story: { inline: false, iframeHeight: 960 },
+    },
+  },
 } satisfies Meta<typeof StorefrontDemo>;
 
 export default meta;
