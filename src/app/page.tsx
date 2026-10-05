@@ -76,6 +76,7 @@ async function HeroProduct() {
     <ProductCard
       product={hero}
       priority
+      sizes="(max-width: 1023px) 46vw, 360px"
       action={<ProductCartAction product={hero} />}
     />
   );
