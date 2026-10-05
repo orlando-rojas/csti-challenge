@@ -12,15 +12,14 @@ import {
   GridSkeleton,
   JsonLd,
   ProductDetail,
+  ProductGrid,
   ProductSkeleton,
   productStructuredData,
-  DeferredProductGrid,
   type Product,
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
 import { catalogCanonical, productCanonical } from "@/shared/lib/seo";
 import { Container } from "@/shared/ui/container";
-import { inlineCatalogImage } from "@/shared/lib/inline-catalog-image";
 
 export async function generateStaticParams() {
   const products = await listProducts();
@@ -73,7 +72,6 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
   if (!product) notFound();
 
   const canonical = productCanonical(product.id);
-  const imageSrc = await inlineCatalogImage(product.image, 200, 35);
 
   return (
     <>
@@ -91,7 +89,6 @@ async function ProductContent({ params }: { params: Promise<{ id: string }> }) {
       />
       <ProductDetail
         product={product}
-        {...(imageSrc ? { imageSrc } : {})}
         action={
           <AddToCartButton
             productId={product.id}
@@ -117,10 +114,18 @@ async function RelatedProducts({ product }: { product: Product }) {
   const related = await getRelated(product);
   if (related.length === 0) return null;
   return (
-    <DeferredProductGrid
+    <ProductGrid
       products={related}
       transitionTitle={false}
       titleLevel="h3"
+      renderAction={(item) => (
+        <AddToCartButton
+          productId={item.id}
+          title={item.title}
+          image={item.image}
+          unitPrice={item.price.amount}
+        />
+      )}
     />
   );
 }
