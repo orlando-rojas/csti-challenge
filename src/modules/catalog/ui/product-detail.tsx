@@ -21,7 +21,7 @@ export function ProductDetail({
   action: ReactNode;
 }) {
   return (
-    <article className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+    <article className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
       <ViewTransition
         name={`product-${product.id}`}
         share={productImageShare}
@@ -29,10 +29,7 @@ export function ProductDetail({
         exit="none"
         default="none"
       >
-        {/* Stay a square. The grid row used to stretch with the copy, so a
-            long description made a taller photo and warped the shared
-            transition into the next product. */}
-        <ImageFrame className="aspect-square w-full max-w-[35rem] self-start justify-self-start rounded-[2rem]">
+        <ImageFrame className="aspect-square rounded-[2rem]">
           <ProductImage
             src={product.image}
             alt={product.title}

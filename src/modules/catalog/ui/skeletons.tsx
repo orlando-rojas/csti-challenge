@@ -15,11 +15,8 @@ export function GridSkeleton({ count = 6 }: { count?: number }) {
 
 export function ProductSkeleton() {
   return (
-    <div
-      className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
-      aria-hidden="true"
-    >
-      <ImageFrame className="aspect-square w-full max-w-[35rem] self-start justify-self-start animate-pulse rounded-[2rem]" />
+    <div className="grid gap-10 lg:grid-cols-2" aria-hidden="true">
+      <ImageFrame className="aspect-square animate-pulse rounded-3xl" />
       <div className="space-y-4">
         <div className="h-4 w-1/3 animate-pulse rounded-full bg-ink/10" />
         <div className="h-12 w-4/5 animate-pulse rounded-full bg-ink/10" />
