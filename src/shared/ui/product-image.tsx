@@ -1,26 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
-import { preload } from "react-dom";
-
-const WIDTHS = [256, 384, 640, 750, 828, 1080, 1200] as const;
-
-function optimizerSrc(src: string, width: number) {
-  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=75`;
-}
-
-function optimizerSrcSet(src: string) {
-  return WIDTHS.map((width) => `${optimizerSrc(src, width)} ${width}w`).join(
-    ", ",
-  );
-}
 
 export function ProductImage({
   src,
   alt,
   sizes,
   className,
-  preload: preloadImage = false,
+  preload = false,
 }: {
   src: string;
   alt: string;
@@ -35,31 +23,15 @@ export function ProductImage({
     return <MissingProductArt labelled={alt.length > 0} />;
   }
 
-  const srcSet = src.startsWith("data:") ? undefined : optimizerSrcSet(src);
-  if (preloadImage && srcSet) {
-    preload(optimizerSrc(src, 384), {
-      as: "image",
-      fetchPriority: "high",
-      imageSrcSet: srcSet,
-      imageSizes: sizes,
-    });
-  }
-
   return (
-    // Native img keeps the image optimizer without the next/image client runtime.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src.startsWith("data:") ? src : optimizerSrc(src, 384)}
-      {...(srcSet ? { srcSet } : {})}
+    <Image
+      src={src}
       alt={alt}
+      fill
       sizes={sizes}
       onError={() => setFailedSrc(src)}
-      className={["absolute inset-0 h-full w-full", className]
-        .filter(Boolean)
-        .join(" ")}
-      {...(preloadImage
-        ? { fetchPriority: "high" as const, decoding: "auto" as const }
-        : { loading: "lazy" as const })}
+      {...(className ? { className } : {})}
+      {...(preload ? { preload: true } : { loading: "lazy" as const })}
     />
   );
 }

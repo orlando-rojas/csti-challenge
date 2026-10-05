@@ -10,7 +10,7 @@ import {
   HomeCategoryLink,
   listCategories,
   ProductCard,
-  DeferredProductGrid,
+  ProductGrid,
   type Product,
 } from "@/modules/catalog";
 import { buttonVariants } from "@/shared/ui/button";
@@ -101,7 +101,14 @@ async function CategoryRow() {
 
 async function FeaturedGrid() {
   const { rest } = await getFeatured();
-  return <DeferredProductGrid products={rest} columns={4} titleLevel="h3" />;
+  return (
+    <ProductGrid
+      products={rest}
+      columns={4}
+      titleLevel="h3"
+      renderAction={(product) => <ProductCartAction product={product} />}
+    />
+  );
 }
 
 function ProductCartAction({ product }: { product: Product }) {

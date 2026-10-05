@@ -12,9 +12,9 @@ import {
   GridSkeleton,
   JsonLd,
   ProductDetail,
+  ProductGrid,
   ProductSkeleton,
   productStructuredData,
-  DeferredProductGrid,
   type Product,
 } from "@/modules/catalog";
 import { site } from "@/shared/config/site";
@@ -114,10 +114,18 @@ async function RelatedProducts({ product }: { product: Product }) {
   const related = await getRelated(product);
   if (related.length === 0) return null;
   return (
-    <DeferredProductGrid
+    <ProductGrid
       products={related}
       transitionTitle={false}
       titleLevel="h3"
+      renderAction={(item) => (
+        <AddToCartButton
+          productId={item.id}
+          title={item.title}
+          image={item.image}
+          unitPrice={item.price.amount}
+        />
+      )}
     />
   );
 }
