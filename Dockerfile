@@ -11,6 +11,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --from=deps /pnpm/store /pnpm/store
 RUN pnpm install --offline --frozen-lockfile --store-dir /pnpm/store
 COPY . .
+# Git does not keep an empty public directory, and the runner copy requires it.
+RUN mkdir -p public
 ENV HUSKY=0
 ENV NEXT_TELEMETRY_DISABLED=1
 ARG NEXT_PUBLIC_SITE_URL=https://csti-challenge.orlando-rojas.com
