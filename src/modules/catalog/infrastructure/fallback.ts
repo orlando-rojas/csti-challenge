@@ -8,12 +8,7 @@ import {
 } from "@/modules/catalog/infrastructure/schemas";
 
 export function productsFromFixture(): Product[] {
-  return fakeStoreProductListSchema.parse(productsFixture).map((dto) =>
-    mapProduct({
-      ...dto,
-      image: `/catalog/${dto.id}.jpg`,
-    }),
-  );
+  return fakeStoreProductListSchema.parse(productsFixture).map(mapProduct);
 }
 
 export function categoriesFromFixture(): string[] {

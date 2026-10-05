@@ -92,7 +92,9 @@ describe("catalog loading", () => {
     );
     const products = await invalid.listProducts();
     expect(products[0]?.id).toBe(productsFromFixture()[0]?.id);
-    expect(productsFromFixture()[0]?.image).toBe("/catalog/1.jpg");
+    expect(products[0]?.image).toBe(
+      "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png",
+    );
     expect(await invalid.listCategories()).toEqual(categoriesFromFixture());
 
     const blocked = createFakeStoreRepository(
