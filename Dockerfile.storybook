@@ -5,6 +5,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm fetch --store-dir /pnpm/store \
   && pnpm install --offline --frozen-lockfile --store-dir /pnpm/store
 COPY . .
+# Git does not keep an empty public directory. Storybook staticDirs requires it.
+RUN mkdir -p public
 ENV HUSKY=0
 RUN pnpm build-storybook
 
