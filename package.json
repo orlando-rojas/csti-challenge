@@ -35,7 +35,7 @@
   "dependencies": {
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.222.0",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
     "@opentelemetry/sdk-metrics": "^2.11.0",
     "@radix-ui/react-dialog": "^1.1.23",
     "@t3-oss/env-nextjs": "^0.13.11",
